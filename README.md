@@ -3,11 +3,14 @@
 ## Thông tin sinh viên
 - Họ và tên: Nguyễn Trần Phước
 - MSSV: 2470576
-- Hình thức: Thực hiện cá nhân
 
 ## Giảng viên hướng dẫn
 - Lê Thành Sách
 - Nguyễn Quốc Minh
+
+## Landing Page:
+
+- Landing Page: https://nguyentranphuoc.github.io/CO5085_Assignment/
 
 ## Cấu trúc Repository
 
