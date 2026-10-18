@@ -3,15 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <title>Bài tập lớn A1 - Học sâu & Thị giác máy tính</title>
+    
     <style>
-        body { font-family: sans-serif; line-height: 1.6; margin: 2em auto; max-width: 800px; color: #333; }
-        h1, h2, h3 { color: #2c3e50; }
-        ul { list-style-type: disc; }
-        a { color: #2980b9; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .container { background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .task { margin-bottom: 20px; padding: 15px; border-left: 4px solid #2980b9; background: #fff; }
+        :root {
+            --primary: #2c3e50;
+            --secondary: #2980b9;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-light: #7f8c8d;
+            --border-color: #e0e6ed;
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.7; 
+            margin: 0; 
+            padding: 40px 20px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+        }
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            padding: 40px 50px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+        }
+        h1 { 
+            color: var(--primary); 
+            font-size: 2.2em; 
+            border-bottom: 3px solid var(--secondary); 
+            padding-bottom: 15px; 
+            margin-top: 0;
+            margin-bottom: 25px; 
+        }
+        h2 { 
+            color: var(--primary); 
+            margin-top: 35px; 
+            font-weight: 600; 
+            font-size: 1.5em;
+        }
+        h3 { 
+            color: var(--secondary); 
+            margin-top: 0; 
+            font-size: 1.25em;
+        }
+        p { margin-bottom: 15px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        a { 
+            color: var(--secondary); 
+            text-decoration: none; 
+            font-weight: 500; 
+            transition: all 0.3s ease; 
+        }
+        a:hover { 
+            color: var(--primary); 
+            text-decoration: underline; 
+        }
+        .task { 
+            margin-top: 25px; 
+            margin-bottom: 25px; 
+            padding: 25px; 
+            border-left: 5px solid var(--secondary); 
+            background: #f8fbfb; 
+            border-radius: 0 8px 8px 0; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        }
+        .task:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .nav-links li {
+            margin: 0;
+        }
+        .nav-links li a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .nav-links li a:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+        }
     </style>
+
 </head>
 <body>
     <div class="container">
@@ -22,7 +112,7 @@
         <p>Dự án này so sánh hai họ kiến trúc chính trong thị giác máy tính: Mạng nơ-ron Tích chập (CNN) và Vision Transformer (ViT).</p>
         
         <h2>Mã nguồn và báo cáo</h2>
-        <ul>
+        <ul class="nav-links">
             <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/A1" target="_blank">Mã nguồn A1</a></li>
             <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/reports/A1_report.pdf" target="_blank">Báo cáo A1 (Cập nhật sau)</a></li>
             <li><a href="#">Video Demo (Cập nhật sau)</a></li>
