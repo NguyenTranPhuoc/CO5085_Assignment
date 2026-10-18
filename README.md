@@ -21,19 +21,19 @@ CO5085_Assignment/
 ├── A2/                         # Mã nguồn cho Bài tập lớn A2 
 ├── reports/                    # Nơi chứa các file báo cáo PDF 
 ├── docs/                       # Thư mục mã nguồn cho GitHub Pages
-│   ├── index.html              # Trang chung: Tên nhóm, thành viên, giảng viên, Links
+│   ├── index.html              # Trang chung
 ├── README.md                   # Mô tả chung về repo 
 ├── requirements.txt            # Các thư viện cần cài
 ```
 ## Các mốc thời gian nộp bài
 
-| Thời gian (Hạn chót) | Tuần | Nội dung công việc | Tiến độ |
+| Hạn chót | Tuần | Nội dung công việc | Tiến độ |
 | :--- | :--- | :--- | :--- |
 | **19/10/2026** | Tuần 7 | Hoàn thành thiết lập khung trang GitHub Pages (Landing page) | **Đã hoàn thành** |
-| **26/10/2026** | Tuần 8 | Nộp mốc A1.1 | Chưa bắt đầu |
-| **02/11/2026** | Tuần 9 | Nộp bài tập E1, bài tập E2 và mốc A2.1 | Chưa bắt đầu |
-| **09/11/2026** | Tuần 10 | Nộp bài tập E3 và mốc A1.2| Chưa bắt đầu |
-| **16/11/2026** | Tuần 11 | Nộp mốc A2.2 (Mã nguồn pipeline và báo cáo phân tích paper bài A2) | Chưa bắt đầu |
+| **26/10/2026** | Tuần 8 | Nộp mốc A1.1 | Đang thực hiện |
+| **02/11/2026** | Tuần 9 | Nộp bài tập E1, bài tập E2 và mốc A2.1 | Đang thực hiện |
+| **09/11/2026** | Tuần 10 | Nộp bài tập E3 và mốc A1.2| Đang thực hiện |
+| **16/11/2026** | Tuần 11 | Nộp mốc A2.2  | Đang thực hiện |
 
 ## Hướng dẫn cài đặt môi trường
 

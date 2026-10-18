@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài tập E1-E3 - Học sâu & Thị giác máy tính</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 2em auto; max-width: 800px; color: #333; }
+        h1, h2, h3 { color: #2c3e50; }
+        ul { list-style-type: disc; }
+        a { color: #2980b9; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .container { background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .task { margin-bottom: 20px; padding: 15px; border-left: 4px solid #2980b9; background: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bài tập E1-E3</h1>
+        <p><strong>Sinh viên:</strong> Nguyễn Trần Phước (MSSV: 2470576)</p>
+        <p><strong>Môn học:</strong> Học sâu và Ứng dụng trong Thị giác Máy tính (CO5085)</p>
+        <hr>
+        
+        <h2>Tổng quan</h2>
+        <p>Dự án này thực hiện các bài tập E1, E2, và E3, tập trung vào bài toán phân loại ảnh trên tập dữ liệu nhỏ. Mục tiêu là xây dựng, huấn luyện và so sánh các kiến trúc học sâu khác nhau từ các mô hình tuyến tính đến mạng tích chập và mô hình chuỗi.</p>
+        
+        <div class="task">
+            <h3>E1: Phân loại ảnh với Softmax, MLP và CNN</h3>
+            <p>Xây dựng các bộ phân loại cơ bản. Đánh giá độ chính xác, số lượng tham số và phân tích lỗi giữa kiến trúc tuyến tính (Softmax), kết nối đầy đủ (MLP) và mạng nơ-ron tích chập (CNN).</p>
+            <p><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/E1">Xem mã nguồn E1</a></p>
+        </div>
+        
+        <div class="task">
+            <h3>E2: Transformer - MSA và Tokenization</h3>
+            <p>Hiện thực Multi-Head Self-Attention (MSA) từ đầu. Thử nghiệm các phương pháp tokenization khác nhau (Patch, Pixel, CNN-stem) và kết hợp MSA vào mô hình phân loại ảnh.</p>
+            <p><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/E2">Xem mã nguồn E2</a></p>
+        </div>
+        
+        <div class="task">
+            <h3>E3: RNN - LSTM và GRU trên chuỗi ảnh</h3>
+            <p>Mô hình hóa hình ảnh dưới dạng dữ liệu chuỗi. Hiện thực và đánh giá khả năng nắm bắt phụ thuộc của LSTM và GRU so với các kiến trúc truyền thống.</p>
+            <p><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/E3">Xem mã nguồn E3</a></p>
+        </div>
+        
+        <h2>Tài liệu và Báo cáo</h2>
+        <ul>
+            <li><a href="../Reports/exercises.pdf">Xem Báo cáo Tổng hợp E1-E3 (PDF)</a></li>
+            <li><a href="index.html">Quay lại Trang chủ Landing Page</a></li>
+        </ul>
+    </div>
+</body>
+</html>
