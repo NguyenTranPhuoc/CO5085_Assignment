@@ -3,10 +3,11 @@
 ## Thông tin sinh viên
 - Họ và tên: Nguyễn Trần Phước
 - MSSV: 2470576
+- Email: ntphuoc.sdh242@hcmut.edu.vn
 
 ## Giảng viên hướng dẫn
-- Lê Thành Sách
-- Nguyễn Quốc Minh
+- thầy Lê Thành Sách
+- thầy Nguyễn Quốc Minh
 
 ## Landing Page:
 
@@ -24,7 +25,6 @@ CO5085_Assignment/
 ├── A2/                         # Mã nguồn cho Bài tập lớn A2 
 ├── reports/                    # Nơi chứa các file báo cáo PDF 
 ├── docs/                       # Thư mục mã nguồn cho GitHub Pages
-│   ├── index.html              # Trang chung
 ├── README.md                   # Mô tả chung về repo 
 ├── requirements.txt            # Các thư viện cần cài
 ```
@@ -38,11 +38,6 @@ CO5085_Assignment/
 | **09/11/2026** | Tuần 10 | Nộp bài tập E3 và mốc A1.2| Đang thực hiện |
 | **16/11/2026** | Tuần 11 | Nộp mốc A2.2  | Đang thực hiện |
 
-## Hướng dẫn cài đặt môi trường
+## Hướng dẫn cài đặt môi trường (Cập nhật sau)
 
-Cài đặt các thư viện phụ thuộc:
-```bash
-pip install -r requirements.txt
-```
-
-## Hướng dẫn chạy mã nguồn
+## Hướng dẫn chạy mã nguồn (Cập nhật sau)
