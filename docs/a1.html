@@ -100,22 +100,81 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
         }
+        .img-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .img-container img {
+            max-width: 90%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+        .img-caption {
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
     </style>
 
 </head>
 <body>
     <div class="container">
-        <h1>Bài tập lớn A1: CNN vs Transformer trên tập ảnh lớn</h1>
-        <hr>
+        <h1>Bài tập lớn A1: CNN vs Transformer</h1>
         
-        <h2>Tổng quan</h2>
-        <p>Dự án này so sánh hai họ kiến trúc chính trong thị giác máy tính: Mạng nơ-ron Tích chập (CNN) và Vision Transformer (ViT).</p>
+        <h2>Tổng quan dự án</h2>
+        <p>Dự án này so sánh hai họ kiến trúc chính trong thị giác máy tính: Mạng nơ-ron Tích chập (CNN) và Vision Transformer (ViT). Các mô hình được đánh giá trên một tập dữ liệu lớn với nhiều chiến lược huấn luyện khác nhau như huấn luyện từ đầu (from-scratch), fine-tune toàn bộ và đóng băng (freeze) một phần backbone.</p>
+        
+        <div class="task">
+            <h3>1. Tập dữ liệu & Tiền xử lý (EDA/DataLoader)</h3>
+            <p><strong>Tập dữ liệu:</strong> <a href="https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign/data" target="_blank">GTSRB (German Traffic Sign Recognition Benchmark) Dataset</a> (~51.800 ảnh, 43 lớp)</p>
+            <p><strong>Lý do chọn:</strong> Phù hợp với chủ đề giao thông/xe tự lái (Automotive). Tập dữ liệu giải quyết bài toán phân loại đa lớp (43 lớp) với số lượng mẫu lớn (hơn 51.000 ảnh) và đa dạng về kích thước. Tính chất ảnh thực tế bị mờ, ngược sáng hoặc che khuất rất thích hợp để so sánh khả năng trích xuất đặc trưng của CNN và ViT trong điều kiện thực tế.</p>
+            
+            <div class="img-container">
+                <img src="a1_hinh2.png" alt="Mẫu ảnh tập GTSRB">
+                <div class="img-caption">Hình 1: Một số mẫu ảnh ngẫu nhiên từ tập dữ liệu GTSRB với nhiều điều kiện ánh sáng và góc chụp khác nhau.</div>
+            </div>
+
+            <p><strong>Phân tích & Tiền xử lý (EDA):</strong> Dữ liệu có sự mất cân bằng giữa các lớp (có lớp > 2000 ảnh, có lớp chỉ ~200 ảnh). Do đó, dữ liệu được augmentation (Resize về 64x64, Random Rotation, ColorJitter) để mô phỏng điều kiện môi trường đa dạng và tránh overfitting.</p>
+            
+            <div class="img-container">
+                <img src="a1_hinh1.png" alt="Phân bố số lượng ảnh tập GTSRB">
+                <div class="img-caption">Hình 2: Biểu đồ phân bố số lượng ảnh của 43 lớp trong tập huấn luyện cho thấy sự mất cân bằng dữ liệu rõ rệt.</div>
+            </div>
+        </div>
+        
+        <div class="task">
+            <h3>2. Giao thức Thí nghiệm (Protocol)</h3>
+            <ul>
+                <li><strong>Kiến trúc mô hình:</strong> 
+                    <ul>
+                        <li>CNN Backbone: ResNet-50 hoặc ConvNeXt-Tiny</li>
+                        <li>Transformer Backbone: ViT-Base</li>
+                    </ul>
+                </li>
+                <li><strong>Chế độ huấn luyện:</strong> So sánh huấn luyện từ đầu (from-scratch) so với sử dụng trọng số đã huấn luyện trước (pretrained).</li>
+                <li><strong>Chiến lược đóng băng (Freeze):</strong>
+                    <ul>
+                        <li>Freeze toàn bộ backbone (chỉ train classification head)</li>
+                        <li>Freeze một phần (ví dụ: vài block đầu)</li>
+                        <li>Full finetune (cập nhật toàn bộ tham số)</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="task">
+            <h3>3. Kết quả So sánh và Thảo luận</h3>
+            <p><em>(Sẽ được cập nhật ở mốc A1.2)</em> Đánh giá và phân tích độ chính xác (Accuracy), thời gian huấn luyện, số lượng tham số trainable, và các trường hợp dự đoán sai thông qua Ma trận nhầm lẫn (Confusion Matrix).</p>
+        </div>
         
         <h2>Mã nguồn và báo cáo</h2>
         <ul class="nav-links">
             <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/A1" target="_blank">Mã nguồn A1</a></li>
-            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/reports/A1_report.pdf" target="_blank">Báo cáo A1 (Cập nhật sau)</a></li>
-            <li><a href="#">Video Demo (Cập nhật sau)</a></li>
+            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/Reports/A1_report.pdf" target="_blank">Báo cáo PDF</a></li>
+            <li><a href="#" target="_blank">Video Demo (Đang cập nhật)</a></li>
             <li><a href="index.html">Quay lại Trang chủ</a></li>
         </ul>
     </div>
