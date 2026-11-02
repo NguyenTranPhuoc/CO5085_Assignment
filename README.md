@@ -34,7 +34,7 @@ CO5085_Assignment/
 | :--- | :--- | :--- | :--- |
 | **19/10/2026** | Tuần 7 | Hoàn thành thiết lập khung trang GitHub Pages (Landing page) | **Đã hoàn thành** |
 | **26/10/2026** | Tuần 8 | Nộp mốc A1.1 | **Đã hoàn thành** |
-| **02/11/2026** | Tuần 9 | Nộp bài tập E1, bài tập E2 và mốc A2.1 | Đang thực hiện |
+| **02/11/2026** | Tuần 9 | Nộp bài tập E1, bài tập E2 và mốc A2.1 | **Đã hoàn thành** |
 | **09/11/2026** | Tuần 10 | Nộp bài tập E3 và mốc A1.2| Đang thực hiện |
 | **16/11/2026** | Tuần 11 | Nộp mốc A2.2  | Đang thực hiện |
 
