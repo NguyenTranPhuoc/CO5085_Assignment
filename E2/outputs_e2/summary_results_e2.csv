@@ -1,0 +1,4 @@
+Tokenizer,Sequence Length (n),Trainable Params,Best Val Acc (%),Test Acc (%),Test Loss,Train Time (s)
+PATCH,50,105098,88.55,88.3,0.3278,317.1
+PIXEL,197,113546,86.2,84.72,0.3998,315.7
+CNN_STEM,50,122922,90.87,90.33,0.2828,287.4

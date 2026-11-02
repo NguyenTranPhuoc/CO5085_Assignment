@@ -1,0 +1,4 @@
+Model,Trainable Params,Best Val Acc (%),Test Acc (%),Test Loss,Train Time (s)
+SOFTMAX,7850,85.17,84.2,0.4502,240.6
+MLP,235914,89.7,89.04,0.3044,251.8
+CNN,421738,92.72,91.98,0.2507,245.7

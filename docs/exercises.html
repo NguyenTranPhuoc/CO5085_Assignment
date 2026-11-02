@@ -100,6 +100,89 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
         }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0 5px;
+            font-size: 0.92em;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .result-table th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .result-table tbody tr:nth-child(even) {
+            background-color: #f1f6fa;
+        }
+        .result-table td:first-child {
+            font-weight: 600;
+            text-align: left;
+        }
+        .result-table .best {
+            background-color: #e3f6e8;
+            font-weight: 700;
+        }
+        .caption {
+            font-size: 0.85em;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 18px 0 5px;
+        }
+        .gallery figure {
+            margin: 0;
+            flex: 1 1 260px;
+            max-width: 100%;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .gallery figcaption {
+            font-size: 0.85em;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 6px;
+        }
+        .remark {
+            background: #eef6fb;
+            border-left: 4px solid var(--secondary);
+            padding: 10px 15px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95em;
+            margin: 14px 0;
+        }
+        .figure-full {
+            margin: 18px 0;
+        }
+        .figure-full img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fafafa;
+            cursor: zoom-in;
+        }
+        .figure-full figcaption {
+            font-size: 0.9em;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 6px;
+        }
     </style>
 
 </head>
@@ -116,12 +199,122 @@
         <div class="task">
             <h3>E1: Phân loại ảnh với Softmax, MLP và CNN</h3>
             <p>Xây dựng các bộ phân loại cơ bản. Đánh giá độ chính xác, số lượng tham số và phân tích lỗi giữa kiến trúc tuyến tính (Softmax), kết nối đầy đủ (MLP) và mạng nơ-ron tích chập (CNN).</p>
+            <p><strong>Kết quả (Fashion-MNIST, 15 epochs):</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Mô hình</th>
+                        <th>Số tham số</th>
+                        <th>Val Acc (%)</th>
+                        <th>Test Acc (%)</th>
+                        <th>Test Loss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Softmax</td>
+                        <td>7,850</td>
+                        <td>85.17</td>
+                        <td>84.20</td>
+                        <td>0.4502</td>
+                    </tr>
+                    <tr>
+                        <td>MLP</td>
+                        <td>235,914</td>
+                        <td>89.70</td>
+                        <td>89.04</td>
+                        <td>0.3044</td>
+                    </tr>
+                    <tr class="best">
+                        <td>CNN</td>
+                        <td>421,738</td>
+                        <td>92.72</td>
+                        <td>91.98</td>
+                        <td>0.2507</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">CNN đạt độ chính xác cao nhất (91.98%) nhờ bảo toàn cấu trúc không gian 2D; MLP vượt trội so với Softmax tuyến tính.</p>
+
+            <figure class="figure-full">
+                <img src="learning_curves_fashion_mnist.png" alt="Learning curves E1">
+                <figcaption>Đường cong học tập (Loss & Val Accuracy) của 3 mô hình</figcaption>
+            </figure>
+            <figure class="figure-full">
+                <img src="confusion_matrices_fashion_mnist.png" alt="Confusion matrices E1">
+                <figcaption>Ma trận nhầm lẫn trên tập Test</figcaption>
+            </figure>
+            <div class="gallery">
+                <figure>
+                    <img src="misclassified_cnn.png" alt="Misclassified samples CNN">
+                    <figcaption>Một số mẫu CNN dự đoán sai</figcaption>
+                </figure>
+            </div>
+            <p class="remark"><strong>Nhận xét:</strong> Đường cong Loss/Accuracy cho thấy CNN hội tụ nhanh và ổn định hơn 2 mô hình còn lại. Ma trận nhầm lẫn cho thấy nhầm lẫn chủ yếu giữa các lớp quần áo có hình dạng tương tự (Shirt, Pullover, Coat).</p>
+
             <p><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/E1">Xem mã nguồn E1</a></p>
         </div>
         
         <div class="task">
             <h3>E2: Transformer - MSA và Tokenization</h3>
             <p>Hiện thực Multi-Head Self-Attention (MSA) từ đầu. Thử nghiệm các phương pháp tokenization khác nhau (Patch, Pixel, CNN-stem) và kết hợp MSA vào mô hình phân loại ảnh.</p>
+            <p><strong>Kết quả (Fashion-MNIST, 15 epochs, d_model=64, 2 lớp, 4 heads):</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Tokenizer</th>
+                        <th>Độ dài chuỗi (n)</th>
+                        <th>Số tham số</th>
+                        <th>Val Acc (%)</th>
+                        <th>Test Acc (%)</th>
+                        <th>Test Loss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Patch</td>
+                        <td>50</td>
+                        <td>105,098</td>
+                        <td>88.55</td>
+                        <td>88.30</td>
+                        <td>0.3278</td>
+                    </tr>
+                    <tr>
+                        <td>Pixel</td>
+                        <td>197</td>
+                        <td>113,546</td>
+                        <td>86.20</td>
+                        <td>84.72</td>
+                        <td>0.3998</td>
+                    </tr>
+                    <tr class="best">
+                        <td>CNN-stem</td>
+                        <td>50</td>
+                        <td>122,922</td>
+                        <td>90.87</td>
+                        <td>90.33</td>
+                        <td>0.2828</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">CNN-stem cho kết quả tốt nhất (90.33%) nhờ trích xuất đặc trưng cục bộ trước khi đưa vào MSA; Pixel kém nhất dù chuỗi dài nhất (n=197), minh họa chi phí bậc hai không mang lại lợi thế.</p>
+
+            <figure class="figure-full">
+                <img src="e2_learning_curves_fashion_mnist.png" alt="Learning curves E2">
+                <figcaption>Đường cong học tập của 3 phương pháp Tokenization</figcaption>
+            </figure>
+            <div class="gallery">
+                <figure>
+                    <img src="attn_map_patch_fashion_mnist.png" alt="Attention map Patch">
+                    <figcaption>Bản đồ chú ý [CLS] - Patch Tokenizer</figcaption>
+                </figure>
+                <figure>
+                    <img src="attn_map_cnn_stem_fashion_mnist.png" alt="Attention map CNN-stem">
+                    <figcaption>Bản đồ chú ý [CLS] - CNN-Stem Tokenizer</figcaption>
+                </figure>
+            </div>
+            <p class="remark"><strong>Nhận xét:</strong> CNN-stem hội tụ nhanh và ổn định nhất trong 15 epoch nhờ chuỗi token ngắn nhưng giàu ngữ nghĩa cục bộ. Bản đồ Attention cho thấy token [CLS] tập trung rõ vào vùng chứa vật thể (trung tâm ảnh) thay vì nền, đặc biệt rõ nét hơn ở CNN-stem so với Patch.</p>
+
             <p><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/E2">Xem mã nguồn E2</a></p>
         </div>
         

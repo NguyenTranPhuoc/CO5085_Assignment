@@ -1,0 +1,42 @@
+{
+    "topic": "Semantic Segmentation of Urban Scenes (Cityscapes)",
+    "dataset": {
+        "name": "Cityscapes",
+        "url": "https://www.cityscapes-dataset.com/",
+        "annotation": "gtFine (pixel-level, 19 trainId classes + ignore=255)",
+        "splits": {
+            "train": 2975,
+            "val": 500,
+            "test": 1525
+        },
+        "using_synthetic_placeholder": false
+    },
+    "paper": {
+        "title": "SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers",
+        "authors": "Xie, Wang, Yu, Anandkumar, Alvarez, Luo",
+        "venue": "NeurIPS 2021",
+        "url": "https://arxiv.org/abs/2105.15203"
+    },
+    "metric": [
+        "mIoU",
+        "Dice",
+        "FPS (tùy chọn)"
+    ],
+    "planned_pipeline": [
+        {
+            "name": "DeepLabV3+",
+            "backbone": "ResNet-50",
+            "type": "CNN"
+        },
+        {
+            "name": "SegFormer",
+            "backbone": "MiT-B0",
+            "type": "Transformer"
+        }
+    ],
+    "crop_size": [
+        256,
+        512
+    ],
+    "seed": 42
+}

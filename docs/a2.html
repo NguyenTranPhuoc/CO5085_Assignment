@@ -75,6 +75,51 @@
             transform: translateX(5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0 10px;
+            font-size: 0.92em;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid var(--border-color);
+            padding: 9px 12px;
+            text-align: left;
+        }
+        .result-table th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+        }
+        .result-table tbody tr:nth-child(even) {
+            background-color: #f1f6fa;
+        }
+        .img-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .img-container img {
+            max-width: 98%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+        .img-caption {
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+        .remark {
+            background: #eef6fb;
+            border-left: 4px solid var(--secondary);
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95em;
+            margin: 14px 0;
+        }
         .nav-links {
             list-style: none;
             padding: 0;
@@ -105,18 +150,130 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bài tập lớn A2: Chủ đề tự chọn + Phân tích Paper</h1>
+        <h1>Bài tập lớn A2: Phân đoạn Ngữ nghĩa Cảnh đường Giao thông Đô thị (ADAS)</h1>
+        <p><strong>Nhóm:</strong> AutoVision &nbsp;|&nbsp; <strong>Sinh viên:</strong> Nguyễn Trần Phước (MSSV: 2470576)</p>
+        <p><strong>Chủ đề đã chọn (Mốc A2.1):</strong> Chủ đề 1 — Phân đoạn ảnh ngữ nghĩa (<em>Urban Road-Scene Semantic Segmentation for Autonomous Driving</em>)</p>
         <hr>
         
-        <h2>Tổng quan</h2>
-        <p>Trong bài tập lớn A2, tiến hành xây dựng một pipeline học sâu hoàn chỉnh giải quyết một bài toán thị giác máy tính cụ thể dựa trên paper (sẽ cập nhật sau).</p>
+        <h2>Tổng quan Đề tài</h2>
+        <p>Trong hệ thống hỗ trợ lái xe tiên tiến (ADAS) và xe tự hành (Autonomous Driving), việc hiểu cảnh đường giao thông tới mức độ từng điểm ảnh (pixel-level semantic segmentation) đóng vai trò cốt lõi để xác định vùng mặt đường có thể di chuyển, vỉa hè, phương tiện, người đi bộ và hệ thống biển báo/đèn tín hiệu. Đề tài này xây dựng pipeline phân đoạn ngữ nghĩa trên tập dữ liệu chuẩn công nghiệp <strong>Cityscapes</strong> và phân tích chuyên sâu kiến trúc <strong>SegFormer (NeurIPS 2021)</strong> đối sánh với nhánh mạng tích chập <strong>DeepLabV3+ / U-Net</strong>.</p>
+
+        <div class="task">
+            <h3>1. Bài toán và Tập dữ liệu (EDA)</h3>
+            <p><strong>Tập dữ liệu:</strong> <a href="https://www.cityscapes-dataset.com/" target="_blank">Cityscapes Dataset (Fine Annotations)</a> — thu thập từ camera hành trình gắn trên ô tô tại 50 thành phố châu Âu.</p>
+            <ul>
+                <li><strong>Quy mô & Phân chia chuẩn:</strong> Tổng cộng <strong>5,000 ảnh</strong> độ phân giải gốc <code>1024 &times; 2048</code> được gán nhãn pixel chi tiết:
+                    <ul>
+                        <li><strong>Train set:</strong> 2,975 ảnh (18 thành phố)</li>
+                        <li><strong>Validation set:</strong> 500 ảnh (3 thành phố độc lập: Frankfurt, Lindau, M&uuml;nster)</li>
+                        <li><strong>Test set:</strong> 1,525 ảnh (6 thành phố)</li>
+                    </ul>
+                </li>
+                <li><strong>Số lớp đánh giá:</strong> <strong>19 lớp ngữ nghĩa chuẩn</strong> chia thành 7 nhóm: <em>Flat</em> (<code>road</code>, <code>sidewalk</code>), <em>Construction</em> (<code>building</code>, <code>wall</code>, <code>fence</code>), <em>Object</em> (<code>pole</code>, <code>traffic light</code>, <code>traffic sign</code>), <em>Nature</em> (<code>vegetation</code>, <code>terrain</code>), <em>Sky</em> (<code>sky</code>), <em>Human</em> (<code>person</code>, <code>rider</code>), và <em>Vehicle</em> (<code>car</code>, <code>truck</code>, <code>bus</code>, <code>train</code>, <code>motorcycle</code>, <code>bicycle</code>), cùng nhãn <code>ignore_index = 255</code>.</li>
+            </ul>
+
+            <div class="img-container">
+                <img src="sample_batch_cityscapes.png" alt="Mẫu ảnh, mask và overlay tập dữ liệu Cityscapes">
+                <div class="img-caption">Hình 1: Mẫu ảnh gốc, mask phân đoạn (19 lớp, tô màu chuẩn Cityscapes) và overlay trên tập Train (trích từ notebook A2.1).</div>
+            </div>
+
+            <div class="img-container">
+                <img src="class_pixel_distribution.png" alt="Phân bố tỷ lệ pixel theo lớp trên tập Cityscapes">
+                <div class="img-caption">Hình 2: Phân bố tỷ lệ diện tích Pixel của 19 lớp ngữ nghĩa (trainId) trên tập Train, tính trên toàn bộ 2.975 ảnh.</div>
+            </div>
+
+            <div class="remark">
+                <strong>Nhận xét EDA (số liệu thực đo trên tập Train):</strong> Tập dữ liệu Cityscapes có hiện tượng <strong>mất cân bằng lớp cực kỳ lớn (Extreme Class Imbalance)</strong>: 3 lớp nền (<code>road</code> 32.64%, <code>building</code> 20.21%, <code>vegetation</code> 14.10%) chiếm tới hơn 66% tổng số pixel, trong khi các lớp quan trọng về an toàn giao thông như <code>traffic light</code> (0.18%), <code>traffic sign</code> (0.49%), <code>rider</code> (0.12%), <code>motorcycle</code> (0.09%) chỉ chiếm dưới 0.5% diện tích ảnh. Điều này ảnh hưởng trực tiếp tới lựa chọn hàm mất mát ở mục 4 (kết hợp Cross-Entropy với Dice Loss để tránh mô hình chỉ học tốt các lớp nền phổ biến).
+            </div>
+        </div>
+
+        <div class="task">
+            <h3>2. Dataset, DataLoader, Augmentation &amp; Metrics</h3>
+            <ul>
+                <li><strong>Ánh xạ nhãn (Label Mapping):</strong> Chuyển đổi 34 mã nhãn gốc của Cityscapes về <strong>19 <code>trainId</code> chuẩn</strong> (từ <code>0</code> đến <code>18</code>), các lớp nền phụ/vùng biên gán về <code>ignore_index = 255</code>.</li>
+                <li><strong>Chiến lược Augmentation (Đồng bộ trên cả Image và Mask):</strong>
+                    <ul>
+                        <li><code>RandomResizedCrop</code> / Resize về kích thước <code>512 &times; 1024</code> (giữ nguyên tỷ lệ khung hình 1:2 của camera ô tô).</li>
+                        <li><code>RandomHorizontalFlip(p=0.5)</code> và <code>ColorJitter</code> (thay đổi độ sáng, tương phản để mô phỏng biến thiên ánh sáng ngoài trời).</li>
+                        <li>Chuẩn hóa (Normalize) theo <code>mean=[0.485, 0.456, 0.406]</code>, <code>std=[0.229, 0.224, 0.225]</code>.</li>
+                    </ul>
+                </li>
+                <li><strong>Thước đo đánh giá (Evaluation Metrics):</strong>
+                    <ul>
+                        <li><strong>mIoU (Mean Intersection over Union):</strong> Thước đo chính trung bình trên 19 lớp giao thông.</li>
+                        <li><strong>mDice (Mean Dice Score / F1):</strong> Đánh giá độ nhạy phân đoạn, đặc biệt với các vật thể nhỏ (biển báo, đèn giao thông, người đi bộ).</li>
+                        <li><strong>Pixel Accuracy (PA)</strong>, <strong>Per-class IoU</strong> và tốc độ suy luận thời gian thực <strong>FPS (Frames Per Second)</strong>.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="img-container">
+                <img src="augmented_batch_sample.png" alt="Batch mẫu sau augmentation từ DataLoader">
+                <div class="img-caption">Hình 3: Một batch ảnh/mask thực tế sau augmentation (RandomResizedCrop, Flip, ColorJitter) lấy trực tiếp từ Train DataLoader.</div>
+            </div>
+        </div>
+
+        <div class="task">
+            <h3>3. Bài báo Khoa học Phân tích (Selected Paper)</h3>
+            <p><strong>Trích dẫn (Citation):</strong><br>
+            Enze Xie, Wenhai Wang, Zhiding Yu, Anima Anandkumar, Jose M. Alvarez, and Ping Luo, <em>"SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers"</em>, in <strong>Advances in Neural Information Processing Systems (NeurIPS)</strong>, vol. 34, pp. 12077–12090, 2021.</p>
+            <p><strong>Liên kết:</strong> <a href="https://arxiv.org/abs/2105.15203" target="_blank">arXiv:2105.15203</a> &nbsp;|&nbsp; <a href="https://github.com/NVlabs/SegFormer" target="_blank">Official GitHub (NVlabs/SegFormer)</a></p>
+            <ul>
+                <li><strong>Ý tưởng cốt lõi:</strong> Thiết kế bộ mã hóa <strong>Hierarchical Mix Transformer (MiT)</strong> trích xuất đặc trưng đa tỷ lệ (<code>1/4, 1/8, 1/16, 1/32</code>) thông qua <em>Overlapping Patch Merging</em>, kết hợp cơ chế <em>Efficient Self-Attention</em> (giảm chiều chuỗi với tỷ lệ <em>R</em>) và khối <em>Mix-FFN</em> dùng <code>3&times;3 Depthwise Conv</code> để loại bỏ hoàn toàn Positional Encoding cố định.</li>
+                <li><strong>Bộ giải mã nhẹ (All-MLP Decoder):</strong> Hợp nhất đặc trưng đa tầng chỉ bằng các phép chiếu tuyến tính (MLP), giúp biến thể <strong>SegFormer-B0</strong> chỉ nặng <code>3.7M</code> tham số nhưng đạt độ chính xác vượt trội và tốc độ suy luận cao trên cảnh đường Cityscapes.</li>
+            </ul>
+        </div>
+
+        <div class="task">
+            <h3>4. Kế hoạch Pipeline, Huấn luyện &amp; So sánh Phương pháp (&ge; 2 biến thể)</h3>
+            <p>Nhóm thiết kế pipeline đối sánh trực tiếp giữa hai họ kiến trúc <strong>CNN</strong> và <strong>Hierarchical Vision Transformer</strong> cùng khảo sát hàm mất mát (Loss Ablation):</p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Cấu hình</th>
+                        <th>Kiến trúc Mô hình</th>
+                        <th>Backbone</th>
+                        <th>Hàm mất mát (Loss)</th>
+                        <th>Mục tiêu đối sánh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Model 1 (Baseline)</strong></td>
+                        <td>DeepLabV3+ / U-Net</td>
+                        <td>ResNet-50 / ResNet-34 (CNN)</td>
+                        <td>Cross-Entropy + Dice</td>
+                        <td>Đại diện nhánh CNN tích chập đa tỷ lệ (ASPP)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model 2 (Paper)</strong></td>
+                        <td>SegFormer-B0</td>
+                        <td>MiT-B0 (Hierarchical ViT)</td>
+                        <td>Cross-Entropy + Dice</td>
+                        <td>Đánh giá hiệu năng &amp; tốc độ của Transformer</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model 2a (Ablation)</strong></td>
+                        <td>SegFormer-B0</td>
+                        <td>MiT-B0 (Hierarchical ViT)</td>
+                        <td>Cross-Entropy thuần</td>
+                        <td>Đánh giá tác động của Dice Loss lên các lớp nhỏ</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="task">
+            <h3>5. Kết quả, Thảo luận và Hạn chế</h3>
+            <p><em>(Đang cập nhật cho mốc A2.2 — Hạn nộp 16/11/2026)</em> Bảng kết quả định lượng (mIoU, mDice, FPS, Per-class IoU trên 19 lớp), trực quan hóa bản đồ phân đoạn dự đoán so với Ground Truth và phân tích các trường hợp lỗi (failure cases) sẽ được bổ sung đầy đủ ở mốc A2.2.</p>
+        </div>
         
-        <h2>Mã nguồn và báo cáo</h2>
+        <h2>Mã nguồn và Báo cáo</h2>
         <ul class="nav-links">
-            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/A2" target="_blank">Mã nguồn A2 </a></li>
-            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/reports/A2_report.pdf" target="_blank">Báo cáo A2 (Cập nhật sau)</a></li>
-            <li><a href="#"> Video Demo (Cập nhật sau)</a></li>
-            <li><a href="index.html">Quay lại Trang chủ </a></li>
+            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/A2" target="_blank">Mã nguồn A2</a></li>
+            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/Reports/A2_report.pdf" target="_blank">Báo cáo PDF (Mốc A2.1)</a></li>
+            <li><a href="#">Video Demo (Cập nhật ở A2.2)</a></li>
+            <li><a href="index.html">Quay lại Trang chủ</a></li>
         </ul>
     </div>
 </body>

@@ -1,0 +1,19 @@
+# Core deep learning stack
+# Lưu ý: nếu dùng GPU, cài bản torch/torchvision/torchaudio phù hợp với CUDA
+# theo hướng dẫn tại https://pytorch.org/get-started/locally/ thay vì dòng dưới.
+torch>=2.5.0
+torchvision>=0.20.0
+torchaudio>=2.5.0
+
+# Xử lý dữ liệu & khoa học dữ liệu
+numpy
+pandas
+scikit-learn
+
+# Trực quan hóa
+matplotlib
+seaborn
+
+# Môi trường notebook
+jupyter
+ipykernel
