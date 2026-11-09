@@ -320,7 +320,125 @@
         
         <div class="task">
             <h3>E3: RNN - LSTM và GRU trên chuỗi ảnh</h3>
-            <p>Mô hình hóa hình ảnh dưới dạng dữ liệu chuỗi. Hiện thực và đánh giá khả năng nắm bắt phụ thuộc của LSTM và GRU so với các kiến trúc truyền thống.</p>
+            <p>Mô hình hóa hình ảnh dưới dạng dữ liệu chuỗi (hàng pixel hoặc patch 4x4). Hiện thực và đánh giá khả năng nắm bắt phụ thuộc của LSTM và GRU so với các kiến trúc truyền thống (MLP, CNN).</p>
+            <p><strong>Kết quả (Fashion-MNIST, 15 epochs, hidden_size=128):</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Mô hình</th>
+                        <th>Số tham số</th>
+                        <th>Val Acc (%)</th>
+                        <th>Test Acc (%)</th>
+                        <th>Test Loss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="best">
+                        <td>CNN</td>
+                        <td>421,738</td>
+                        <td>92.95</td>
+                        <td>92.08</td>
+                        <td>0.2372</td>
+                    </tr>
+                    <tr>
+                        <td>MLP</td>
+                        <td>235,914</td>
+                        <td>89.68</td>
+                        <td>88.57</td>
+                        <td>0.3174</td>
+                    </tr>
+                    <tr>
+                        <td>LSTM-row</td>
+                        <td>82,186</td>
+                        <td>89.47</td>
+                        <td>88.76</td>
+                        <td>0.3067</td>
+                    </tr>
+                    <tr>
+                        <td>LSTM-patch</td>
+                        <td>76,042</td>
+                        <td>88.02</td>
+                        <td>87.11</td>
+                        <td>0.3528</td>
+                    </tr>
+                    <tr>
+                        <td>GRU-row</td>
+                        <td>61,962</td>
+                        <td>90.75</td>
+                        <td>90.06</td>
+                        <td>0.2771</td>
+                    </tr>
+                    <tr>
+                        <td>GRU-patch</td>
+                        <td>57,354</td>
+                        <td>88.60</td>
+                        <td>87.97</td>
+                        <td>0.3342</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">CNN vẫn dẫn đầu (92.08%) nhờ bảo toàn cấu trúc không gian 2D, nhưng GRU-row đạt kết quả tốt nhất trong nhóm mô hình hồi quy (90.06%) với số tham số ít hơn nhiều (61,962 so với 421,738 của CNN); biểu diễn theo hàng (row) luôn vượt trội hơn theo patch với cùng loại RNN.</p>
+
+            <figure class="figure-full">
+                <img src="e3_learning_curves_fashion_mnist.png" alt="Learning curves E3">
+                <figcaption>Đường cong học tập (Val Loss & Val Accuracy) của 6 mô hình</figcaption>
+            </figure>
+            <figure class="figure-full">
+                <img src="e3_summary_bars_fashion_mnist.png" alt="Summary bars E3">
+                <figcaption>So sánh Test Accuracy và số lượng tham số giữa các mô hình</figcaption>
+            </figure>
+
+            <p><strong>Độ nhạy với thứ tự chuỗi (đảo ngược hàng pixel ở tập Test):</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Mô hình</th>
+                        <th>Test Acc gốc (%)</th>
+                        <th>Test Acc đảo hàng (%)</th>
+                        <th>Mức giảm (pp)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MLP</td>
+                        <td>88.57</td>
+                        <td>19.97</td>
+                        <td>68.60</td>
+                    </tr>
+                    <tr class="best">
+                        <td>CNN</td>
+                        <td>92.08</td>
+                        <td>20.75</td>
+                        <td>71.33</td>
+                    </tr>
+                    <tr>
+                        <td>LSTM-row</td>
+                        <td>88.76</td>
+                        <td>18.79</td>
+                        <td>69.97</td>
+                    </tr>
+                    <tr>
+                        <td>LSTM-patch</td>
+                        <td>87.11</td>
+                        <td>21.56</td>
+                        <td>65.55</td>
+                    </tr>
+                    <tr>
+                        <td>GRU-row</td>
+                        <td>90.06</td>
+                        <td>21.43</td>
+                        <td>68.63</td>
+                    </tr>
+                    <tr>
+                        <td>GRU-patch</td>
+                        <td>87.97</td>
+                        <td>22.77</td>
+                        <td>65.20</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="remark"><strong>Nhận xét:</strong> Mọi mô hình đều giảm mạnh accuracy khi thứ tự hàng pixel bị đảo ngược (gần với mức đoán ngẫu nhiên ~20% cho 10 lớp), kể cả MLP/CNN vốn không xử lý ảnh theo chuỗi thời gian - vì phép đảo hàng phá vỡ luôn cấu trúc không gian 2D mà CNN/MLP dựa vào, chứ không riêng gì tính tuần tự mà LSTM/GRU khai thác. Trong nhóm RNN, biểu diễn "patch" nhạy cảm hơn một chút với việc đảo hàng so với "row" (mức giảm thấp hơn), do mỗi patch 4x4 vẫn giữ được một phần thông tin không gian cục bộ ngay cả khi thứ tự patch bị thay đổi.</p>
+
             <p><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/E3">Xem mã nguồn E3</a></p>
         </div>
         
