@@ -1,0 +1,9 @@
+Model,Arch,Mode,Total Params,Trainable Params,Best Val Acc (%),Test Acc (%),Test F1-macro,Time (s)
+ResNet-18-Scratch,ResNet-18,Scratch,11198571,11198571,95.21,91.96,0.8968,237.8
+ResNet-18-Frozen,ResNet-18,Frozen,11198571,22059,78.73,68.43,0.5991,163.9
+ResNet-18-Partial,ResNet-18,Partial,11198571,8415787,99.49,96.21,0.9462,162.3
+ResNet-18-Finetune,ResNet-18,Finetune,11198571,11198571,99.9,98.64,0.9793,174.0
+ViT-B/32-Scratch,ViT-B/32,Scratch,87488299,87488299,25.89,23.36,0.0951,510.5
+ViT-B/32-Frozen,ViT-B/32,Frozen,87488299,33067,92.12,78.07,0.698,214.8
+ViT-B/32-Partial,ViT-B/32,Partial,87488299,7122475,98.85,94.93,0.9072,231.3
+ViT-B/32-Finetune,ViT-B/32,Finetune,87488299,87488299,99.44,97.54,0.9582,509.7
