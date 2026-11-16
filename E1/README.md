@@ -75,6 +75,9 @@ Script sẽ tự tải dataset về `./data`, in log huấn luyện/đánh giá 
 và lưu `learning_curves_fashion_mnist.png`, `confusion_matrices_fashion_mnist.png`,
 `misclassified_<model>.png` vào thư mục `--output_dir`.
 
+Các kết quả đã lưu trong [`outputs_e1/`](./outputs_e1/), bao gồm
+`summary_results_e1.csv`, cấu hình, log huấn luyện và các hình ảnh phân tích lỗi.
+
 ## 5. Kết quả (Fashion-MNIST, 15 epochs)
 
 | Mô hình | Số tham số | Val Acc (%) | Test Acc (%) | Test Loss |

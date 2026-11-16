@@ -79,6 +79,9 @@ Tham số dòng lệnh:
 Script sẽ tự tải dataset về `./data`, in log huấn luyện/đánh giá ra console,
 và lưu `e2_learning_curves_fashion_mnist.png` vào thư mục `--output_dir`.
 
+Các kết quả đã lưu trong [`outputs_e2/`](./outputs_e2/), bao gồm
+`summary_results_e2.csv`, cấu hình, log huấn luyện, learning curves và attention maps.
+
 ## 5. Kết quả (Fashion-MNIST, 15 epochs, d_model=64, 2 lớp, 4 heads)
 
 | Tokenizer | Độ dài chuỗi (n) | Số tham số | Val Acc (%) | Test Acc (%) | Test Loss |

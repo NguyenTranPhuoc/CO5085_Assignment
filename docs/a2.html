@@ -79,12 +79,16 @@
             width: 100%;
             border-collapse: collapse;
             margin: 18px 0 10px;
-            font-size: 0.92em;
+            font-size: 0.90em;
         }
         .result-table th, .result-table td {
             border: 1px solid var(--border-color);
-            padding: 9px 12px;
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .result-table td:first-child {
             text-align: left;
+            font-weight: 600;
         }
         .result-table th {
             background-color: var(--primary);
@@ -94,6 +98,16 @@
         }
         .result-table tbody tr:nth-child(even) {
             background-color: #f1f6fa;
+        }
+        .result-table .best {
+            background-color: #e3f6e8;
+            font-weight: 700;
+        }
+        .caption {
+            font-size: 0.85em;
+            color: var(--text-light);
+            margin-top: 4px;
+            margin-bottom: 14px;
         }
         .img-container {
             text-align: center;
@@ -150,113 +164,115 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bài tập lớn A2: Phân đoạn Ngữ nghĩa Cảnh đường Giao thông Đô thị (ADAS)</h1>
+        <h1>Bài tập lớn A2: Phân đoạn Ngữ nghĩa Cảnh đường Giao thông Đô thị</h1>
         <p><strong>Nhóm:</strong> AutoVision &nbsp;|&nbsp; <strong>Sinh viên:</strong> Nguyễn Trần Phước (MSSV: 2470576)</p>
-        <p><strong>Chủ đề đã chọn (Mốc A2.1):</strong> Chủ đề 1 — Phân đoạn ảnh ngữ nghĩa (<em>Urban Road-Scene Semantic Segmentation for Autonomous Driving</em>)</p>
+        <p><strong>Chủ đề thực hiện:</strong> Chủ đề 1 — Phân đoạn ảnh ngữ nghĩa cảnh đường giao thông hỗ trợ lái xe tự động</p>
         <hr>
         
         <h2>Tổng quan Đề tài</h2>
-        <p>Trong hệ thống hỗ trợ lái xe tiên tiến (ADAS) và xe tự hành (Autonomous Driving), việc hiểu cảnh đường giao thông tới mức độ từng điểm ảnh (pixel-level semantic segmentation) đóng vai trò cốt lõi để xác định vùng mặt đường có thể di chuyển, vỉa hè, phương tiện, người đi bộ và hệ thống biển báo/đèn tín hiệu. Đề tài này xây dựng pipeline phân đoạn ngữ nghĩa trên tập dữ liệu chuẩn công nghiệp <strong>Cityscapes</strong> và phân tích chuyên sâu kiến trúc <strong>SegFormer (NeurIPS 2021)</strong> đối sánh với nhánh mạng tích chập <strong>DeepLabV3+ / U-Net</strong>.</p>
+        <p>Trong hệ thống hỗ trợ lái xe tiên tiến (ADAS) và xe tự hành, việc hiểu cảnh đường giao thông tới mức độ từng điểm ảnh đóng vai trò cốt lõi để xác định vùng mặt đường có thể di chuyển, vỉa hè, phương tiện, người đi bộ và hệ thống biển báo/đèn tín hiệu. Đề tài này xây dựng pipeline phân đoạn ngữ nghĩa đầu-cuối trên tập dữ liệu chuẩn công nghiệp <strong>Cityscapes (5,000 ảnh, 19 lớp)</strong> và phân tích chuyên sâu kiến trúc <strong>SegFormer (NeurIPS 2021)</strong> đối sánh với nhánh mạng tích chập đa tỷ lệ <strong>DeepLabV3+ (ResNet-50)</strong>.</p>
 
         <div class="task">
-            <h3>1. Bài toán và Tập dữ liệu (EDA)</h3>
-            <p><strong>Tập dữ liệu:</strong> <a href="https://www.cityscapes-dataset.com/" target="_blank">Cityscapes Dataset (Fine Annotations)</a> — thu thập từ camera hành trình gắn trên ô tô tại 50 thành phố châu Âu.</p>
+            <h3>1. Bài toán và Tập dữ liệu</h3>
+            <p><strong>Tập dữ liệu:</strong> <a href="https://www.cityscapes-dataset.com/" target="_blank">Cityscapes Dataset</a> — thu thập từ camera hành trình gắn trên ô tô tại 50 thành phố châu Âu.</p>
             <ul>
-                <li><strong>Quy mô & Phân chia chuẩn:</strong> Tổng cộng <strong>5,000 ảnh</strong> độ phân giải gốc <code>1024 &times; 2048</code> được gán nhãn pixel chi tiết:
+                <li><strong>Quy mô &amp; Phân chia chuẩn:</strong> Tổng cộng <strong>5,000 ảnh</strong> độ phân giải gốc <code>1024 &times; 2048</code> được gán nhãn pixel chi tiết:
                     <ul>
-                        <li><strong>Train set:</strong> 2,975 ảnh (18 thành phố)</li>
-                        <li><strong>Validation set:</strong> 500 ảnh (3 thành phố độc lập: Frankfurt, Lindau, M&uuml;nster)</li>
-                        <li><strong>Test set:</strong> 1,525 ảnh (6 thành phố)</li>
+                        <li><strong>Tập huấn luyện (Train):</strong> 2,975 ảnh (18 thành phố)</li>
+                        <li><strong>Tập kiểm định (Validation):</strong> 500 ảnh (3 thành phố độc lập: Frankfurt, Lindau, M&uuml;nster)</li>
+                        <li><strong>Tập kiểm thử (Test):</strong> 1,525 ảnh (6 thành phố)</li>
                     </ul>
                 </li>
                 <li><strong>Số lớp đánh giá:</strong> <strong>19 lớp ngữ nghĩa chuẩn</strong> chia thành 7 nhóm: <em>Flat</em> (<code>road</code>, <code>sidewalk</code>), <em>Construction</em> (<code>building</code>, <code>wall</code>, <code>fence</code>), <em>Object</em> (<code>pole</code>, <code>traffic light</code>, <code>traffic sign</code>), <em>Nature</em> (<code>vegetation</code>, <code>terrain</code>), <em>Sky</em> (<code>sky</code>), <em>Human</em> (<code>person</code>, <code>rider</code>), và <em>Vehicle</em> (<code>car</code>, <code>truck</code>, <code>bus</code>, <code>train</code>, <code>motorcycle</code>, <code>bicycle</code>), cùng nhãn <code>ignore_index = 255</code>.</li>
             </ul>
 
             <div class="img-container">
-                <img src="sample_batch_cityscapes.png" alt="Mẫu ảnh, mask và overlay tập dữ liệu Cityscapes">
-                <div class="img-caption">Hình 1: Mẫu ảnh gốc, mask phân đoạn (19 lớp, tô màu chuẩn Cityscapes) và overlay trên tập Train (trích từ notebook A2.1).</div>
+                <img src="../A2/outputs_a2_1/sample_batch_cityscapes.png" alt="Mẫu ảnh gốc, mask phân đoạn 19 lớp và overlay trên tập Cityscapes">
+                <div class="img-caption">Hình 1: Mẫu ảnh gốc, mặt nạ phân đoạn 19 lớp tô màu chuẩn Cityscapes và ảnh chồng lớp trên tập Train.</div>
             </div>
 
             <div class="img-container">
-                <img src="class_pixel_distribution.png" alt="Phân bố tỷ lệ pixel theo lớp trên tập Cityscapes">
-                <div class="img-caption">Hình 2: Phân bố tỷ lệ diện tích Pixel của 19 lớp ngữ nghĩa (trainId) trên tập Train, tính trên toàn bộ 2.975 ảnh.</div>
+                <img src="../A2/outputs_a2_1/class_pixel_distribution.png" alt="Phân tích EDA tập dữ liệu Cityscapes">
+                <div class="img-caption">Hình 2: Phân bố tỷ lệ diện tích Pixel của 19 lớp ngữ nghĩa trên tập Train, tính trên toàn bộ 2,975 ảnh.</div>
             </div>
 
             <div class="remark">
-                <strong>Nhận xét EDA (số liệu thực đo trên tập Train):</strong> Tập dữ liệu Cityscapes có hiện tượng <strong>mất cân bằng lớp cực kỳ lớn (Extreme Class Imbalance)</strong>: 3 lớp nền (<code>road</code> 32.64%, <code>building</code> 20.21%, <code>vegetation</code> 14.10%) chiếm tới hơn 66% tổng số pixel, trong khi các lớp quan trọng về an toàn giao thông như <code>traffic light</code> (0.18%), <code>traffic sign</code> (0.49%), <code>rider</code> (0.12%), <code>motorcycle</code> (0.09%) chỉ chiếm dưới 0.5% diện tích ảnh. Điều này ảnh hưởng trực tiếp tới lựa chọn hàm mất mát ở mục 4 (kết hợp Cross-Entropy với Dice Loss để tránh mô hình chỉ học tốt các lớp nền phổ biến).
+                <strong>Nhận xét phân tích dữ liệu:</strong> Tập dữ liệu Cityscapes có hiện tượng <strong>mất cân bằng lớp rất lớn</strong>: 3 lớp nền (<code>road</code> 32.64%, <code>building</code> 20.21%, <code>vegetation</code> 14.10%) chiếm tới hơn 66% tổng số pixel, trong khi các lớp quan trọng về an toàn giao thông như <code>traffic sign</code> (0.49%), <code>traffic light</code> (0.18%), <code>rider</code> (0.12%), <code>motorcycle</code> (0.09%) chỉ chiếm dưới 0.5% diện tích ảnh. Điều này ảnh hưởng trực tiếp tới lựa chọn hàm mất mát ở Mục 4 (cần kết hợp <strong>Cross-Entropy + Dice Loss</strong> để tránh việc mô hình chỉ học tốt các lớp phổ biến).
             </div>
         </div>
 
         <div class="task">
-            <h3>2. Dataset, DataLoader, Augmentation &amp; Metrics</h3>
+            <h3>2. Tiền xử lý Dữ liệu, Tăng cường Dữ liệu &amp; Thước đo Đánh giá</h3>
             <ul>
-                <li><strong>Ánh xạ nhãn (Label Mapping):</strong> Chuyển đổi 34 mã nhãn gốc của Cityscapes về <strong>19 <code>trainId</code> chuẩn</strong> (từ <code>0</code> đến <code>18</code>), các lớp nền phụ/vùng biên gán về <code>ignore_index = 255</code>.</li>
-                <li><strong>Chiến lược Augmentation (Đồng bộ trên cả Image và Mask):</strong>
+                <li><strong>Ánh xạ nhãn:</strong> Chuyển đổi 34 mã nhãn gốc của Cityscapes về <strong>19 <code>trainId</code> chuẩn</strong> (từ <code>0</code> đến <code>18</code>) bằng bảng tra cứu <code>LABEL_LUT</code>, các lớp nền phụ và vùng biên gán về <code>ignore_index = 255</code>.</li>
+                <li><strong>Chiến lược tăng cường dữ liệu (Đồng bộ trên cả ảnh và mặt nạ, <code>seed = 42</code>):</strong>
                     <ul>
-                        <li><code>RandomResizedCrop</code> / Resize về kích thước <code>512 &times; 1024</code> (giữ nguyên tỷ lệ khung hình 1:2 của camera ô tô).</li>
+                        <li><code>RandomResizedCrop</code> / Resize về kích thước <code>256 &times; 512</code> (giữ nguyên tỷ lệ khung hình 1:2 của camera ô tô; nội suy <code>Bilinear</code> cho ảnh RGB và <code>Nearest-Neighbor</code> cho mặt nạ phân đoạn).</li>
                         <li><code>RandomHorizontalFlip(p=0.5)</code> và <code>ColorJitter</code> (thay đổi độ sáng, tương phản để mô phỏng biến thiên ánh sáng ngoài trời).</li>
-                        <li>Chuẩn hóa (Normalize) theo <code>mean=[0.485, 0.456, 0.406]</code>, <code>std=[0.229, 0.224, 0.225]</code>.</li>
+                        <li>Chuẩn hóa theo thống kê ImageNet: <code>mean=[0.485, 0.456, 0.406]</code>, <code>std=[0.229, 0.224, 0.225]</code>.</li>
                     </ul>
                 </li>
-                <li><strong>Thước đo đánh giá (Evaluation Metrics):</strong>
+                <li><strong>Thước đo đánh giá:</strong>
                     <ul>
-                        <li><strong>mIoU (Mean Intersection over Union):</strong> Thước đo chính trung bình trên 19 lớp giao thông.</li>
-                        <li><strong>mDice (Mean Dice Score / F1):</strong> Đánh giá độ nhạy phân đoạn, đặc biệt với các vật thể nhỏ (biển báo, đèn giao thông, người đi bộ).</li>
-                        <li><strong>Pixel Accuracy (PA)</strong>, <strong>Per-class IoU</strong> và tốc độ suy luận thời gian thực <strong>FPS (Frames Per Second)</strong>.</li>
+                        <li><strong>mIoU:</strong> Độ chồng lấp trung bình trên 19 lớp giao thông (thước đo chính).</li>
+                        <li><strong>mDice:</strong> Đánh giá độ nhạy phân đoạn, đặc biệt với các vật thể nhỏ (biển báo, đèn giao thông, người đi bộ).</li>
+                        <li><strong>Pixel Accuracy (PA)</strong>, <strong>Per-class IoU</strong> và tốc độ suy luận thời gian thực <strong>FPS</strong>.</li>
                     </ul>
                 </li>
             </ul>
 
             <div class="img-container">
-                <img src="augmented_batch_sample.png" alt="Batch mẫu sau augmentation từ DataLoader">
-                <div class="img-caption">Hình 3: Một batch ảnh/mask thực tế sau augmentation (RandomResizedCrop, Flip, ColorJitter) lấy trực tiếp từ Train DataLoader.</div>
+                <img src="../A2/outputs_a2_1/augmented_batch_sample.png" alt="Mẫu batch sau augmentation từ Train DataLoader">
+                <div class="img-caption">Hình 3: Một batch ảnh và mặt nạ thực tế sau khi tăng cường dữ liệu lấy trực tiếp từ Train DataLoader.</div>
             </div>
         </div>
 
         <div class="task">
-            <h3>3. Bài báo Khoa học Phân tích (Selected Paper)</h3>
-            <p><strong>Trích dẫn (Citation):</strong><br>
+            <h3>3. Bài báo Khoa học Phân tích</h3>
+            <p><strong>Trích dẫn:</strong><br>
             Enze Xie, Wenhai Wang, Zhiding Yu, Anima Anandkumar, Jose M. Alvarez, and Ping Luo, <em>"SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers"</em>, in <strong>Advances in Neural Information Processing Systems (NeurIPS)</strong>, vol. 34, pp. 12077–12090, 2021.</p>
-            <p><strong>Liên kết:</strong> <a href="https://arxiv.org/abs/2105.15203" target="_blank">arXiv:2105.15203</a> &nbsp;|&nbsp; <a href="https://github.com/NVlabs/SegFormer" target="_blank">Official GitHub (NVlabs/SegFormer)</a></p>
+            <p><strong>Liên kết:</strong> <a href="https://arxiv.org/abs/2105.15203" target="_blank">arXiv:2105.15203</a> &nbsp;|&nbsp; <a href="https://github.com/NVlabs/SegFormer" target="_blank">GitHub (NVlabs/SegFormer)</a></p>
             <ul>
-                <li><strong>Ý tưởng cốt lõi:</strong> Thiết kế bộ mã hóa <strong>Hierarchical Mix Transformer (MiT)</strong> trích xuất đặc trưng đa tỷ lệ (<code>1/4, 1/8, 1/16, 1/32</code>) thông qua <em>Overlapping Patch Merging</em>, kết hợp cơ chế <em>Efficient Self-Attention</em> (giảm chiều chuỗi với tỷ lệ <em>R</em>) và khối <em>Mix-FFN</em> dùng <code>3&times;3 Depthwise Conv</code> để loại bỏ hoàn toàn Positional Encoding cố định.</li>
-                <li><strong>Bộ giải mã nhẹ (All-MLP Decoder):</strong> Hợp nhất đặc trưng đa tầng chỉ bằng các phép chiếu tuyến tính (MLP), giúp biến thể <strong>SegFormer-B0</strong> chỉ nặng <code>3.7M</code> tham số nhưng đạt độ chính xác vượt trội và tốc độ suy luận cao trên cảnh đường Cityscapes.</li>
+                <li><strong>1. Tóm tắt phương pháp:</strong> Thiết kế bộ mã hóa phân cấp <strong>Mix Transformer (MiT)</strong> trích xuất đặc trưng đa tỷ lệ (<code>1/4, 1/8, 1/16, 1/32</code>) thông qua ghép patch chồng lấp; nén chiều chuỗi khóa <em>K</em> và giá trị <em>V</em> qua cơ chế tự chú ý hiệu quả (giảm chi phí từ <code>O(N&sup2;)</code> xuống <code>O(N&sup2;/R)</code> với <code>R &isin; {8, 4, 2, 1}</code>); đồng thời tích hợp tích chập tách chiều <code>3&times;3</code> vào khối <em>Mix-FFN</em> để loại bỏ hoàn toàn mã hóa vị trí cố định. Phần giải mã <strong>All-MLP</strong> chỉ dùng các phép chiếu tuyến tính để hợp nhất đặc trưng đa tầng ở kích thước <code>H/4 &times; W/4</code>, giúp biến thể <strong>SegFormer-B0</strong> chỉ nặng <code>3.72M</code> tham số.</li>
+                <li><strong>2. Tóm tắt thí nghiệm trong bài báo gốc:</strong> Khi tiền huấn luyện trên ImageNet-1K và tinh chỉnh dài hạn (160,000 vòng lặp trên 8 GPU V100 ở độ phân giải <code>1024 &times; 1024</code>), SegFormer-B0 đạt <code>76.2%</code> mIoU và SegFormer-B5 đạt <code>84.0%</code> mIoU trên Cityscapes, đồng thời chống chịu rất tốt trước nhiễu thời tiết trên bộ Cityscapes-C.</li>
+                <li><strong>3. Hạn chế của bài báo:</strong> (i) Độ phân giải đặc trưng đầu ra chỉ dừng ở <code>H/4 &times; W/4</code> rồi phóng đại 4 lần bằng nội suy song tuyến tính nên dễ làm trơn biên của các vật thể cực mảnh (cột đèn <code>pole</code>, đèn tín hiệu <code>traffic light</code>); (ii) Chỉ sử dụng hàm mất mát Cross-Entropy thuần túy nên hội tụ chậm trên các lớp diện tích nhỏ (<code>&lt; 0.5%</code>) khi huấn luyện ngắn; (iii) Đòi hỏi trọng số tiền huấn luyện lớn và lịch huấn luyện dài để các khối tự chú ý hội tụ tối ưu.</li>
+                <li><strong>4. Đối chiếu với Pipeline của nhóm:</strong> Nhóm giữ nguyên chuẩn 19 lớp của Cityscapes, điều chỉnh độ phân giải huấn luyện về <code>256 &times; 512</code>, đối sánh trực tiếp <strong>SegFormer-B0 (3.72M tham số)</strong> với <strong>DeepLabV3+ ResNet-50 (42.00M tham số)</strong> và mở rộng nghiên cứu kết hợp hàm mất mát <strong>CE + 0.5&times;Dice</strong> để khắc phục hạn chế mất cân bằng lớp của bài báo gốc.</li>
             </ul>
         </div>
 
         <div class="task">
-            <h3>4. Kế hoạch Pipeline, Huấn luyện &amp; So sánh Phương pháp (&ge; 2 biến thể)</h3>
-            <p>Nhóm thiết kế pipeline đối sánh trực tiếp giữa hai họ kiến trúc <strong>CNN</strong> và <strong>Hierarchical Vision Transformer</strong> cùng khảo sát hàm mất mát (Loss Ablation):</p>
+            <h3>4. Thiết kế Pipeline, Huấn luyện &amp; Các Cấu hình So sánh</h3>
+            <p>Nhóm triển khai và huấn luyện 3 cấu hình thực nghiệm trong <code>10 epochs</code> (<code>batch_size = 8</code>, <code>AdamW</code>, <code>CosineAnnealingLR</code>, <code>seed = 42</code>) để đối sánh giữa hai họ kiến trúc <strong>CNN</strong> và <strong>Transformer</strong> cùng khảo sát vai trò của hàm mất mát:</p>
             <table class="result-table">
                 <thead>
                     <tr>
                         <th>Cấu hình</th>
                         <th>Kiến trúc Mô hình</th>
                         <th>Backbone</th>
-                        <th>Hàm mất mát (Loss)</th>
+                        <th>Hàm mất mát</th>
                         <th>Mục tiêu đối sánh</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Model 1 (Baseline)</strong></td>
-                        <td>DeepLabV3+ / U-Net</td>
-                        <td>ResNet-50 / ResNet-34 (CNN)</td>
-                        <td>Cross-Entropy + Dice</td>
+                        <td>Mô hình 1</td>
+                        <td>DeepLabV3+</td>
+                        <td>ResNet-50 (CNN)</td>
+                        <td>CE + Dice</td>
                         <td>Đại diện nhánh CNN tích chập đa tỷ lệ (ASPP)</td>
                     </tr>
                     <tr>
-                        <td><strong>Model 2 (Paper)</strong></td>
+                        <td>Mô hình 2</td>
                         <td>SegFormer-B0</td>
-                        <td>MiT-B0 (Hierarchical ViT)</td>
-                        <td>Cross-Entropy + Dice</td>
+                        <td>MiT-B0 (Transformer)</td>
+                        <td>CE + Dice</td>
                         <td>Đánh giá hiệu năng &amp; tốc độ của Transformer</td>
                     </tr>
                     <tr>
-                        <td><strong>Model 2a (Ablation)</strong></td>
+                        <td>Mô hình 2a</td>
                         <td>SegFormer-B0</td>
-                        <td>MiT-B0 (Hierarchical ViT)</td>
-                        <td>Cross-Entropy thuần</td>
+                        <td>MiT-B0 (Transformer)</td>
+                        <td>CE thuần</td>
                         <td>Đánh giá tác động của Dice Loss lên các lớp nhỏ</td>
                     </tr>
                 </tbody>
@@ -264,15 +280,125 @@
         </div>
 
         <div class="task">
-            <h3>5. Kết quả, Thảo luận và Hạn chế</h3>
-            <p><em>(Đang cập nhật cho mốc A2.2 — Hạn nộp 16/11/2026)</em> Bảng kết quả định lượng (mIoU, mDice, FPS, Per-class IoU trên 19 lớp), trực quan hóa bản đồ phân đoạn dự đoán so với Ground Truth và phân tích các trường hợp lỗi (failure cases) sẽ được bổ sung đầy đủ ở mốc A2.2.</p>
+            <h3>5. Kết quả Thực nghiệm, Thảo luận và Phân tích Lỗi</h3>
+            <p><strong>5.1. Bảng tổng hợp kết quả định lượng trên tập Validation Cityscapes (500 ảnh, 19 lớp):</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Mô hình</th>
+                        <th>Backbone</th>
+                        <th>Hàm mất mát</th>
+                        <th>Tham số (M)</th>
+                        <th>mIoU (%)</th>
+                        <th>mDice (%)</th>
+                        <th>Pixel Acc (%)</th>
+                        <th>FPS</th>
+                        <th>Thời gian (s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="best">
+                        <td>DeepLabV3+-ResNet50</td>
+                        <td>ResNet-50 (CNN)</td>
+                        <td>CE + Dice</td>
+                        <td>42.00</td>
+                        <td>62.77</td>
+                        <td>75.36</td>
+                        <td>92.79</td>
+                        <td>85.5</td>
+                        <td>763.9</td>
+                    </tr>
+                    <tr class="best">
+                        <td>SegFormer-B0 (CE+Dice)</td>
+                        <td>MiT-B0 (Transformer)</td>
+                        <td>CE + Dice</td>
+                        <td>3.72</td>
+                        <td>41.63</td>
+                        <td>53.40</td>
+                        <td>88.19</td>
+                        <td>114.3</td>
+                        <td>644.1</td>
+                    </tr>
+                    <tr>
+                        <td>SegFormer-B0 (CE-only)</td>
+                        <td>MiT-B0 (Transformer)</td>
+                        <td>CE thuần</td>
+                        <td>3.72</td>
+                        <td>36.92</td>
+                        <td>46.75</td>
+                        <td>87.68</td>
+                        <td>161.2</td>
+                        <td>558.4</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">DeepLabV3+-ResNet50 đạt mIoU cao nhất (62.77%, mDice 75.36%), trong khi SegFormer-B0 nhẹ hơn 11.3 lần (3.72M so với 42.00M tham số) và đạt tốc độ suy luận thời gian thực vượt trội (114.3 – 161.2 FPS). Việc kết hợp Dice Loss giúp SegFormer-B0 tăng +4.71% mIoU và +6.65% mDice so với chỉ dùng Cross-Entropy.</p>
+
+            <div class="img-container">
+                <img src="../A2/outputs_a2_2/a2_learning_curves_cityscapes.png" alt="Đường cong Validation Loss và Validation mIoU trên Cityscapes">
+                <div class="img-caption">Hình 4: Đường cong Validation Loss (trái) và Validation mIoU (%) (phải) của 3 cấu hình qua 10 epochs huấn luyện.</div>
+            </div>
+
+            <p><strong>5.2. Bảng đối sánh IoU (%) trên từng lớp trong 19 lớp giao thông đô thị:</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Lớp ngữ nghĩa</th>
+                        <th>Nhóm</th>
+                        <th>DeepLabV3+-ResNet50 (%)</th>
+                        <th>SegFormer-B0 (CE+Dice) (%)</th>
+                        <th>SegFormer-B0 (CE-only) (%)</th>
+                        <th>Mức tăng nhờ Dice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>road</td><td>Flat</td><td>96.61</td><td>93.64</td><td>93.23</td><td>+0.41%</td></tr>
+                    <tr><td>sidewalk</td><td>Flat</td><td>74.80</td><td>57.69</td><td>56.11</td><td>+1.58%</td></tr>
+                    <tr><td>building</td><td>Construction</td><td>87.15</td><td>79.71</td><td>78.58</td><td>+1.13%</td></tr>
+                    <tr><td>wall</td><td>Construction</td><td>46.39</td><td>24.21</td><td>20.85</td><td>+3.36%</td></tr>
+                    <tr><td>fence</td><td>Construction</td><td>43.15</td><td>14.46</td><td>9.25</td><td>+5.21%</td></tr>
+                    <tr><td>pole</td><td>Object</td><td>31.71</td><td>22.15</td><td>20.09</td><td>+2.06%</td></tr>
+                    <tr class="best"><td>traffic light</td><td>Object</td><td>44.29</td><td>14.92</td><td>3.99</td><td>+10.93%</td></tr>
+                    <tr class="best"><td>traffic sign</td><td>Object</td><td>53.49</td><td>21.80</td><td>14.40</td><td>+7.40%</td></tr>
+                    <tr><td>vegetation</td><td>Nature</td><td>86.84</td><td>82.72</td><td>82.25</td><td>+0.47%</td></tr>
+                    <tr><td>terrain</td><td>Nature</td><td>58.39</td><td>46.49</td><td>45.64</td><td>+0.85%</td></tr>
+                    <tr><td>sky</td><td>Sky</td><td>90.08</td><td>87.44</td><td>84.84</td><td>+2.60%</td></tr>
+                    <tr><td>person</td><td>Human</td><td>62.43</td><td>42.12</td><td>39.81</td><td>+2.31%</td></tr>
+                    <tr class="best"><td>rider</td><td>Human</td><td>44.07</td><td>12.10</td><td>1.00</td><td>+11.10%</td></tr>
+                    <tr><td>car</td><td>Vehicle</td><td>89.37</td><td>78.62</td><td>77.07</td><td>+1.55%</td></tr>
+                    <tr><td>truck</td><td>Vehicle</td><td>68.10</td><td>14.45</td><td>11.30</td><td>+3.15%</td></tr>
+                    <tr class="best"><td>bus</td><td>Vehicle</td><td>70.81</td><td>33.57</td><td>19.90</td><td>+13.67%</td></tr>
+                    <tr class="best"><td>train</td><td>Vehicle</td><td>47.41</td><td>17.12</td><td>8.12</td><td>+9.00%</td></tr>
+                    <tr class="best"><td>motorcycle</td><td>Vehicle</td><td>38.28</td><td>9.70</td><td>3.65</td><td>+6.05%</td></tr>
+                    <tr class="best"><td>bicycle</td><td>Vehicle</td><td>59.25</td><td>38.11</td><td>31.36</td><td>+6.75%</td></tr>
+                </tbody>
+            </table>
+
+            <div class="img-container">
+                <img src="../A2/outputs_a2_2/a2_per_class_iou_cityscapes.png" alt="So sánh Per-class IoU trên 19 lớp Cityscapes">
+                <div class="img-caption">Hình 5: Biểu đồ cột so sánh trực quan IoU (%) trên 19 lớp ngữ nghĩa của Cityscapes.</div>
+            </div>
+
+            <div class="img-container">
+                <img src="../A2/outputs_a2_2/a2_qualitative_predictions_cityscapes.png" alt="So sánh trực quan bản đồ phân đoạn trên tập Validation Cityscapes">
+                <div class="img-caption">Hình 6: So sánh trực quan bản đồ phân đoạn dự đoán trên 3 cảnh đường phức tạp thuộc tập Validation: Ảnh gốc (cột 1), Ground Truth 19 lớp (cột 2), DeepLabV3+ ResNet-50 (cột 3) và SegFormer-B0 (cột 4).</div>
+            </div>
+
+            <div class="remark">
+                <strong>Thảo luận chuyên sâu &amp; Phân tích lỗi:</strong>
+                <ul>
+                    <li><strong>1. Hiệu quả rõ rệt của Dice Loss đối với các lớp nhỏ:</strong> Khi chỉ dùng <code>Cross-Entropy thuần</code>, <code>SegFormer-B0</code> gần như bỏ sót các lớp chiếm diện tích <code>&lt; 0.5%</code> như <code>rider</code> (IoU chỉ 1.00%), <code>motorcycle</code> (3.65%) và <code>traffic light</code> (3.99%). Khi kết hợp <strong>CE + 0.5&times;Dice</strong>, toàn bộ 19/19 lớp đều tăng IoU (mIoU tăng <strong>+4.71%</strong>, mDice tăng <strong>+6.65%</strong>), trong đó các lớp hiếm tăng vọt: <code>bus</code> (<strong>+13.67%</strong>), <code>rider</code> (<strong>+11.10%</strong>, tăng gấp 12 lần), <code>traffic light</code> (<strong>+10.93%</strong>), <code>train</code> (<strong>+9.00%</strong>), <code>traffic sign</code> (<strong>+7.40%</strong>) và <code>bicycle</code> (<strong>+6.75%</strong>).</li>
+                    <li><strong>2. Đánh đổi giữa Độ chính xác và Dung lượng/Tốc độ:</strong> <strong>DeepLabV3+-ResNet50</strong> đạt độ chính xác cao nhất (<strong>62.77% mIoU</strong>, <strong>75.36% mDice</strong>, <strong>92.79% PA</strong>) nhờ dung lượng lớn (42.00M tham số) và trọng số tiền huấn luyện chuyên sâu từ Torchvision. Ngược lại, <strong>SegFormer-B0</strong> nhỏ gọn hơn <strong>11.3 lần</strong> (chỉ <strong>3.72M tham số</strong>) và đạt tốc độ suy luận thời gian thực <strong>114.3 – 161.2 FPS</strong>, vẫn phân đoạn chính xác các vùng cấu trúc chính (<code>road</code> 93.64%, <code>sky</code> 87.44%, <code>vegetation</code> 82.72%, <code>building</code> 79.71%, <code>car</code> 78.62%).</li>
+                    <li><strong>3. Phân tích các trường hợp lỗi trên Hình 6:</strong> (i) <em>Làm trơn biên vật thể mảnh:</em> Do bộ giải mã All-MLP của SegFormer-B0 nội suy <code>4&times;</code> từ độ phân giải <code>H/4 &times; W/4</code>, các cột đèn mảnh (<code>pole</code>) và biển báo ở xa bị đứt đoạn so với DeepLabV3+; (ii) <em>Vùng nắp capo xe gắn camera (<code>ignore_index = 255</code>):</em> Vùng mũi xe Mercedes màu đen ở mép dưới ảnh Ground Truth bị loại trừ khi tính hàm mất mát nên mô hình dự đoán thành <code>car/bus</code> khi suy luận (có thể lọc bỏ dễ dàng bằng mặt nạ cố định theo góc gắn camera trên xe).</li>
+                </ul>
+            </div>
         </div>
         
         <h2>Mã nguồn và Báo cáo</h2>
         <ul class="nav-links">
             <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/tree/main/A2" target="_blank">Mã nguồn A2</a></li>
-            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/Reports/A2_report.pdf" target="_blank">Báo cáo PDF (Mốc A2.1)</a></li>
-            <li><a href="#">Video Demo (Cập nhật ở A2.2)</a></li>
+            <li><a href="https://github.com/NguyenTranPhuoc/CO5085_Assignment/blob/main/Reports/A2_report.pdf" target="_blank">Báo cáo PDF</a></li>
+            <li><a href="#" target="_blank">Video Demo</a></li>
             <li><a href="index.html">Quay lại Trang chủ</a></li>
         </ul>
     </div>

@@ -1,0 +1,7 @@
+Model,Original Test Acc (%),Row-Flipped Test Acc (%),Drop (pp)
+MLP,88.57,19.97,68.6
+CNN,92.08,20.75,71.33
+LSTM-row,88.76,18.79,69.97
+LSTM-patch,87.11,21.56,65.55
+GRU-row,90.06,21.43,68.63
+GRU-patch,87.97,22.77,65.2

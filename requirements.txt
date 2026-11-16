@@ -9,6 +9,9 @@ torchaudio>=2.5.0
 numpy
 pandas
 scikit-learn
+Pillow
+tqdm
+kagglehub
 
 # Trực quan hóa
 matplotlib

@@ -23,7 +23,7 @@ CO5085_Assignment/
 ├── E3/                         # Mã nguồn cho Bài tập E3 
 ├── A1/                         # Mã nguồn cho Bài tập lớn A1 
 ├── A2/                         # Mã nguồn cho Bài tập lớn A2 
-├── reports/                    # Nơi chứa các file báo cáo PDF 
+├── Reports/                    # Nơi chứa các file báo cáo PDF
 ├── docs/                       # Thư mục mã nguồn cho GitHub Pages
 ├── README.md                   # Mô tả chung về repo 
 ├── requirements.txt            # Các thư viện cần cài
@@ -35,8 +35,8 @@ CO5085_Assignment/
 | **19/10/2026** | Tuần 7 | Hoàn thành thiết lập khung trang GitHub Pages (Landing page) | **Đã hoàn thành** |
 | **26/10/2026** | Tuần 8 | Nộp mốc A1.1 | **Đã hoàn thành** |
 | **02/11/2026** | Tuần 9 | Nộp bài tập E1, bài tập E2 và mốc A2.1 | **Đã hoàn thành** |
-| **09/11/2026** | Tuần 10 | Nộp bài tập E3 và mốc A1.2| Đang thực hiện |
-| **16/11/2026** | Tuần 11 | Nộp mốc A2.2  | Đang thực hiện |
+| **09/11/2026** | Tuần 10 | Nộp bài tập E3 và mốc A1.2 | **Đã hoàn thành** |
+| **16/11/2026** | Tuần 11 | Nộp mốc A2.2 | **Đã hoàn thành** |
 
 ## Hướng dẫn cài đặt môi trường
 
@@ -57,7 +57,7 @@ thay vì bản CPU mặc định trong `requirements.txt`.
 
 ## Hướng dẫn chạy mã nguồn
 
-Mỗi bài tập (E1, E2, E3, A1, A2) có notebook và README riêng mô tả chi tiết
+Mỗi bài tập (E1, E2, E3, A1, A2) có notebook, mã nguồn và README riêng mô tả
 cách chạy và kết quả:
 
 - [E1 - Softmax / MLP / CNN](./E1/README.md)
@@ -74,3 +74,10 @@ Về tổng thể, các bước chạy chung cho mỗi bài tập là:
    thư mục `data/` nếu cần).
 4. Kết quả (hình ảnh, bảng số liệu) được lưu vào thư mục `outputs_*` tương
    ứng và có thể xem tổng hợp tại [Landing Page](https://nguyentranphuoc.github.io/CO5085_Assignment/).
+
+## Báo cáo và kết quả
+
+- [Danh mục báo cáo](./Reports/README.md)
+- [Trang kết quả E1-E3](./docs/exercises.html)
+- [Trang kết quả A1](./docs/a1.html)
+- [Trang kết quả A2](./docs/a2.html)

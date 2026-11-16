@@ -96,34 +96,31 @@ nhạy thứ tự chuỗi), và lưu `e3_learning_curves_fashion_mnist.png`,
 
 ## 5. Kết quả (Fashion-MNIST, 15 epochs, hidden_size=128, 1 lớp)
 
-> Điền lại số liệu thực tế sau khi chạy `train.py`/notebook trên máy của bạn.
-
 | Mô hình | Số tham số | Val Acc (%) | Test Acc (%) | Test Loss |
 | :--- | ---: | ---: | ---: | ---: |
-| MLP | 235,914 | — | — | — |
-| CNN | 421,738 | — | — | — |
-| LSTM-row | — | — | — | — |
-| GRU-row | — | — | — | — |
-| LSTM-patch | — | — | — | — |
-| GRU-patch | — | — | — | — |
+| MLP | 235,914 | 89.68 | 88.57 | 0.3174 |
+| CNN | 421,738 | 92.95 | **92.08** | **0.2372** |
+| LSTM-row | 82,186 | 89.47 | 88.76 | 0.3067 |
+| GRU-row | 61,962 | **90.75** | 90.06 | 0.2771 |
+| LSTM-patch | 76,042 | 88.02 | 87.11 | 0.3528 |
+| GRU-patch | 57,354 | 88.60 | 87.97 | 0.3342 |
 
 ### Độ nhạy thứ tự chuỗi (đảo hàng pixel lúc test)
 
 | Mô hình | Test Acc gốc (%) | Test Acc đảo hàng (%) | Giảm (điểm %) |
 | :--- | ---: | ---: | ---: |
-| MLP | — | — | — |
-| CNN | — | — | — |
-| LSTM-row | — | — | — |
-| GRU-row | — | — | — |
-| LSTM-patch | — | — | — |
-| GRU-patch | — | — | — |
+| MLP | 88.57 | 19.97 | 68.60 |
+| CNN | 92.08 | 20.75 | 71.33 |
+| LSTM-row | 88.76 | 18.79 | 69.97 |
+| GRU-row | 90.06 | 21.43 | 68.63 |
+| LSTM-patch | 87.11 | 21.56 | 65.55 |
+| GRU-patch | 87.97 | 22.77 | 65.20 |
 
-GRU và LSTM thường đạt accuracy thấp hơn CNN (do không bảo toàn cấu trúc
-không gian 2D như CNN) nhưng có thể cạnh tranh với MLP; biểu diễn patch
-(chuỗi ngắn hơn, mỗi bước mang nhiều thông tin không gian cục bộ hơn) nhìn
-chung cho kết quả tốt hơn biểu diễn row. Khi đảo thứ tự hàng lúc test,
-LSTM/GRU giảm accuracy rõ rệt hơn MLP/CNN, cho thấy các mô hình hồi quy
-thực sự khai thác phụ thuộc theo thứ tự thời gian của chuỗi.
+CNN đạt accuracy cao nhất. Trong nhóm hồi quy, GRU-row tốt nhất với 90.06%;
+row sequence cũng tốt hơn patch sequence trong thí nghiệm này. Khi đảo thứ tự
+hàng lúc test, tất cả mô hình đều giảm mạnh (65.20--71.33 điểm phần trăm),
+cho thấy phép biến đổi này làm thay đổi đáng kể tín hiệu hình ảnh mà mô hình
+đã học.
 
 ## 6. Tài liệu liên quan
 

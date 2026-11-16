@@ -1,0 +1,18 @@
+{
+    "dataset": "Fashion-MNIST",
+    "seed": 42,
+    "batch_size": 64,
+    "val_ratio": 0.1,
+    "epochs": 15,
+    "learning_rate": 0.001,
+    "optimizer": "Adam",
+    "hidden_size": 128,
+    "num_layers": 1,
+    "grad_clip_max_norm": 5.0,
+    "sequence_types": [
+        "row",
+        "patch"
+    ],
+    "patch_size": 4,
+    "device": "cuda"
+}

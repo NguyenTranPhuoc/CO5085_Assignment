@@ -75,6 +75,47 @@
             transform: translateX(5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0 8px;
+            font-size: 0.88em;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 8px;
+            text-align: center;
+        }
+        .result-table th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .result-table tbody tr:nth-child(even) {
+            background-color: #f1f6fa;
+        }
+        .result-table td:first-child {
+            font-weight: 600;
+            text-align: left;
+        }
+        .result-table .best {
+            background-color: #e3f6e8;
+            font-weight: 700;
+        }
+        .caption {
+            font-size: 0.85em;
+            color: var(--text-light);
+            margin-top: 4px;
+            margin-bottom: 14px;
+        }
+        .remark {
+            background: #eef6fb;
+            border-left: 4px solid var(--secondary);
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95em;
+            margin: 14px 0;
+        }
         .nav-links {
             list-style: none;
             padding: 0;
@@ -105,7 +146,7 @@
             margin: 20px 0;
         }
         .img-container img {
-            max-width: 90%;
+            max-width: 96%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -122,22 +163,34 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bài tập lớn A1: CNN vs Transformer</h1>
+        <h1>Bài tập lớn A1: CNN vs Transformer trên GTSRB</h1>
+        <p><strong>Nhóm:</strong> AutoVision &nbsp;|&nbsp; <strong>Sinh viên:</strong> Nguyễn Trần Phước (MSSV: 2470576)</p>
+        <p><strong>Môn học:</strong> Học sâu và Ứng dụng trong Thị giác Máy tính (CO5085)</p>
+        <hr>
         
         <h2>Tổng quan dự án</h2>
-        <p>Dự án này so sánh hai họ kiến trúc chính trong thị giác máy tính: Mạng nơ-ron Tích chập (CNN) và Vision Transformer (ViT). Các mô hình được đánh giá trên một tập dữ liệu lớn với nhiều chiến lược huấn luyện khác nhau như huấn luyện từ đầu (from-scratch), fine-tune toàn bộ và đóng băng (freeze) một phần backbone.</p>
+        <p>Dự án này so sánh toàn diện hai họ kiến trúc chính trong thị giác máy tính: Mạng nơ-ron Tích chập (<strong>CNN — ResNet-18</strong>) và Vision Transformer (<strong>ViT — ViT-B/32</strong>) trên bài toán nhận diện biển báo giao thông thực tế <strong>GTSRB (43 lớp)</strong>. Hai kiến trúc được đánh giá xuyên suốt qua 4 chế độ huấn luyện: huấn luyện từ đầu (<code>Scratch</code>), đóng băng toàn bộ backbone (<code>Frozen</code>), mở khóa một phần backbone (<code>Partial</code>) và tinh chỉnh toàn bộ tham số (<code>Finetune</code>).</p>
         
         <div class="task">
-            <h3>1. Tập dữ liệu & Tiền xử lý (EDA/DataLoader)</h3>
-            <p><strong>Tập dữ liệu:</strong> <a href="https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign/data" target="_blank">GTSRB (German Traffic Sign Recognition Benchmark) Dataset</a> (~51.800 ảnh, 43 lớp)</p>
-            <p><strong>Lý do chọn:</strong> Phù hợp với chủ đề giao thông/xe tự lái (Automotive). Tập dữ liệu giải quyết bài toán phân loại đa lớp (43 lớp) với số lượng mẫu lớn (hơn 51.000 ảnh) và đa dạng về kích thước. Tính chất ảnh thực tế bị mờ, ngược sáng hoặc che khuất rất thích hợp để so sánh khả năng trích xuất đặc trưng của CNN và ViT trong điều kiện thực tế.</p>
+            <h3>1. Tập dữ liệu &amp; Tiền xử lý (EDA / DataLoader)</h3>
+            <p><strong>Tập dữ liệu:</strong> <a href="https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign/data" target="_blank">GTSRB (German Traffic Sign Recognition Benchmark) Dataset</a> (~51.839 ảnh, 43 lớp biển báo giao thông).</p>
+            <p><strong>Lý do chọn:</strong> Phù hợp trực tiếp với chủ đề giao thông và hệ thống hỗ trợ lái xe (Automotive / ADAS). Tập dữ liệu giải quyết bài toán phân loại đa lớp (43 lớp) với số lượng mẫu lớn và tính chất ảnh ngoài trời đa dạng (mờ chuyển động, ngược sáng, che khuất một phần), rất thích hợp để kiểm chứng khả năng trích xuất đặc trưng của CNN và ViT.</p>
+            <ul>
+                <li><strong>Phân chia dữ liệu chuẩn (<code>seed = 42</code>):</strong> Tập <code>Train/</code> được tách 90/10 ngẫu nhiên cố định, kết hợp tập kiểm thử độc lập theo <code>Test.csv</code> (ánh xạ chính xác <code>ClassId</code> sang <code>class_to_idx</code>):
+                    <ul>
+                        <li><strong>Train set:</strong> 35,288 ảnh</li>
+                        <li><strong>Validation set:</strong> 3,921 ảnh</li>
+                        <li><strong>Test set:</strong> 12,630 ảnh</li>
+                    </ul>
+                </li>
+            </ul>
             
             <div class="img-container">
                 <img src="a1_hinh2.png" alt="Mẫu ảnh tập GTSRB">
                 <div class="img-caption">Hình 1: Một số mẫu ảnh ngẫu nhiên từ tập dữ liệu GTSRB với nhiều điều kiện ánh sáng và góc chụp khác nhau.</div>
             </div>
 
-            <p><strong>Phân tích & Tiền xử lý (EDA):</strong> Dữ liệu có sự mất cân bằng giữa các lớp (có lớp > 2000 ảnh, có lớp chỉ ~200 ảnh). Do đó, dữ liệu được augmentation (Resize về 64x64, Random Rotation, ColorJitter) để mô phỏng điều kiện môi trường đa dạng và tránh overfitting.</p>
+            <p><strong>Phân tích &amp; Tiền xử lý (EDA):</strong> Dữ liệu có sự mất cân bằng rõ rệt giữa 43 lớp (các lớp phổ biến &gt; 2.000 ảnh, các lớp hiếm ~210 ảnh). Khi huấn luyện mô hình ở A1.2, ảnh được đưa về kích thước <code>224 &times; 224</code> để tương thích với trọng số Pretrained ImageNet-1K, kết hợp Augmentation trên tập Train (<code>RandomRotation(10&deg;)</code>, <code>ColorJitter(brightness=0.2, contrast=0.2)</code>) và chuẩn hóa theo thống kê ImageNet.</p>
             
             <div class="img-container">
                 <img src="a1_hinh1.png" alt="Phân bố số lượng ảnh tập GTSRB">
@@ -146,28 +199,160 @@
         </div>
         
         <div class="task">
-            <h3>2. Giao thức Thí nghiệm (Protocol)</h3>
+            <h3>2. Giao thức Thí nghiệm (Protocol — 8 Cấu hình)</h3>
             <ul>
-                <li><strong>Kiến trúc mô hình:</strong> 
+                <li><strong>Kiến trúc mô hình đối sánh:</strong> 
                     <ul>
-                        <li>CNN Backbone: ResNet-50 hoặc ConvNeXt-Tiny</li>
-                        <li>Transformer Backbone: ViT-Base</li>
+                        <li><strong>CNN Backbone:</strong> <code>ResNet-18</code> (Tổng số tham số: <strong>11,198,571</strong>; thay tầng <code>fc = Linear(512 &rarr; 43)</code>).</li>
+                        <li><strong>Transformer Backbone:</strong> <code>ViT-B/32</code> (Tổng số tham số: <strong>87,488,299</strong>; thay tầng <code>heads = Linear(768 &rarr; 43)</code>).</li>
                     </ul>
                 </li>
-                <li><strong>Chế độ huấn luyện:</strong> So sánh huấn luyện từ đầu (from-scratch) so với sử dụng trọng số đã huấn luyện trước (pretrained).</li>
-                <li><strong>Chiến lược đóng băng (Freeze):</strong>
+                <li><strong>Bốn chế độ huấn luyện &amp; Tốc độ học (Adam, <code>batch_size = 32</code>, <code>weight_decay = 1e-4</code>, <code>epochs = 3</code>):</strong>
                     <ul>
-                        <li>Freeze toàn bộ backbone (chỉ train classification head)</li>
-                        <li>Freeze một phần (ví dụ: vài block đầu)</li>
-                        <li>Full finetune (cập nhật toàn bộ tham số)</li>
+                        <li><code>Scratch</code> (<code>lr = 1e-3</code>): Khởi tạo ngẫu nhiên, huấn luyện 100% tham số.</li>
+                        <li><code>Frozen</code> (<code>lr = 1e-3</code>): Trọng số Pretrained ImageNet-1K, đóng băng toàn bộ backbone, chỉ train classification head (ResNet-18: <code>22,059</code> params ~ 0.2%; ViT-B/32: <code>33,067</code> params ~ 0.04%).</li>
+                        <li><code>Partial</code> (<code>lr = 5e-4</code>): Trọng số Pretrained ImageNet-1K, mở khóa block cuối cùng (<code>layer4</code> của ResNet-18: 75.2% params; <code>encoder_layer_11 + ln</code> của ViT-B/32: 8.1% params) + head.</li>
+                        <li><code>Finetune</code> (<code>lr = 1e-4</code>): Trọng số Pretrained ImageNet-1K, tinh chỉnh toàn bộ 100% tham số mạng.</li>
                     </ul>
                 </li>
+                <li><strong>Thước đo đánh giá:</strong> <strong>Best Val Acc (%)</strong>, <strong>Test Acc (%)</strong>, <strong>Test F1-macro</strong> (đánh giá công bằng trên 43 lớp mất cân bằng) và <strong>Thời gian huấn luyện (s)</strong> trên GPU NVIDIA L4.</li>
             </ul>
         </div>
 
         <div class="task">
-            <h3>3. Kết quả So sánh và Thảo luận</h3>
-            <p><em>(Sẽ được cập nhật ở mốc A1.2)</em> Đánh giá và phân tích độ chính xác (Accuracy), thời gian huấn luyện, số lượng tham số trainable, và các trường hợp dự đoán sai thông qua Ma trận nhầm lẫn (Confusion Matrix).</p>
+            <h3>3. Kết quả So sánh và Thảo luận (Mốc A1.2)</h3>
+            <p><strong>Bảng tổng hợp kết quả thực nghiệm của 8 cấu hình trên tập dữ liệu GTSRB (43 lớp):</strong></p>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Mô hình</th>
+                        <th>Kiến trúc</th>
+                        <th>Chế độ</th>
+                        <th>Tổng tham số</th>
+                        <th>Trainable Params</th>
+                        <th>Best Val Acc (%)</th>
+                        <th>Test Acc (%)</th>
+                        <th>Test F1-macro</th>
+                        <th>Thời gian (s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ResNet-18-Scratch</td>
+                        <td>ResNet-18</td>
+                        <td>Scratch</td>
+                        <td>11,198,571</td>
+                        <td>11,198,571 (100%)</td>
+                        <td>95.21</td>
+                        <td>91.96</td>
+                        <td>0.8968</td>
+                        <td>237.8</td>
+                    </tr>
+                    <tr>
+                        <td>ResNet-18-Frozen</td>
+                        <td>ResNet-18</td>
+                        <td>Frozen</td>
+                        <td>11,198,571</td>
+                        <td>22,059 (0.2%)</td>
+                        <td>78.73</td>
+                        <td>68.43</td>
+                        <td>0.5991</td>
+                        <td>163.9</td>
+                    </tr>
+                    <tr>
+                        <td>ResNet-18-Partial</td>
+                        <td>ResNet-18</td>
+                        <td>Partial</td>
+                        <td>11,198,571</td>
+                        <td>8,415,787 (75.2%)</td>
+                        <td>99.49</td>
+                        <td>96.21</td>
+                        <td>0.9462</td>
+                        <td>162.3</td>
+                    </tr>
+                    <tr class="best">
+                        <td>ResNet-18-Finetune</td>
+                        <td>ResNet-18</td>
+                        <td>Finetune</td>
+                        <td>11,198,571</td>
+                        <td>11,198,571 (100%)</td>
+                        <td>99.90</td>
+                        <td>98.64</td>
+                        <td>0.9793</td>
+                        <td>174.0</td>
+                    </tr>
+                    <tr>
+                        <td>ViT-B/32-Scratch</td>
+                        <td>ViT-B/32</td>
+                        <td>Scratch</td>
+                        <td>87,488,299</td>
+                        <td>87,488,299 (100%)</td>
+                        <td>25.89</td>
+                        <td>23.36</td>
+                        <td>0.0951</td>
+                        <td>510.5</td>
+                    </tr>
+                    <tr>
+                        <td>ViT-B/32-Frozen</td>
+                        <td>ViT-B/32</td>
+                        <td>Frozen</td>
+                        <td>87,488,299</td>
+                        <td>33,067 (0.04%)</td>
+                        <td>92.12</td>
+                        <td>78.07</td>
+                        <td>0.6980</td>
+                        <td>214.8</td>
+                    </tr>
+                    <tr>
+                        <td>ViT-B/32-Partial</td>
+                        <td>ViT-B/32</td>
+                        <td>Partial</td>
+                        <td>87,488,299</td>
+                        <td>7,122,475 (8.1%)</td>
+                        <td>98.85</td>
+                        <td>94.93</td>
+                        <td>0.9072</td>
+                        <td>231.3</td>
+                    </tr>
+                    <tr class="best">
+                        <td>ViT-B/32-Finetune</td>
+                        <td>ViT-B/32</td>
+                        <td>Finetune</td>
+                        <td>87,488,299</td>
+                        <td>87,488,299 (100%)</td>
+                        <td>99.44</td>
+                        <td>97.54</td>
+                        <td>0.9582</td>
+                        <td>509.7</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="caption">ResNet-18-Finetune đạt hiệu năng cao nhất toàn bảng (Test Acc: 98.64%, F1-macro: 0.9793) với chi phí tính toán thấp hơn gần 3 lần so với ViT-B/32-Finetune (97.54%).</p>
+
+            <div class="img-container">
+                <img src="a1_summary_bars_gtsrb.png" alt="So sánh Test Accuracy và Trainable Params A1">
+                <div class="img-caption">Hình 3: Biểu đồ so sánh trực quan Test Accuracy (%) và Số lượng tham số Trainable (thang Log) của 8 cấu hình.</div>
+            </div>
+
+            <div class="img-container">
+                <img src="a1_learning_curves_gtsrb.png" alt="Đường cong Validation Loss và Accuracy A1">
+                <div class="img-caption">Hình 4: Đường cong Validation Loss và Validation Accuracy qua các epoch của 8 cấu hình (nét liền: ResNet-18, nét đứt: ViT-B/32).</div>
+            </div>
+
+            <div class="img-container">
+                <img src="a1_confusion_matrices_gtsrb.png" alt="Ma trận nhầm lẫn chuẩn hóa trên 43 lớp GTSRB">
+                <div class="img-caption">Hình 5: Ma trận nhầm lẫn chuẩn hóa trên tập Test (43 lớp) của toàn bộ 8 cấu hình thực nghiệm.</div>
+            </div>
+
+            <div class="remark">
+                <strong>Nhận xét &amp; Đánh giá chuyên sâu:</strong>
+                <ul>
+                    <li><strong>1. Huấn luyện từ đầu (Scratch):</strong> <strong>ResNet-18-Scratch</strong> đạt kết quả rất tốt (<strong>91.96%</strong> Test Acc, F1-macro 0.8968) nhờ thiên kiến quy nạp không gian cục bộ (translation invariance &amp; locality) của phép tích chập. Ngược lại, <strong>ViT-B/32-Scratch</strong> thất bại khi chỉ đạt <strong>23.36%</strong> (F1-macro 0.0951, dự đoán lệch hẳn vào một số lớp phổ biến trên Confusion Matrix) do Transformer thiếu inductive bias và đòi hỏi lượng dữ liệu/vòng lặp khổng lồ để tự học cấu trúc hình ảnh từ đầu.</li>
+                    <li><strong>2. Đóng băng Backbone (Frozen):</strong> Khi chỉ huấn luyện tầng Linear Head, <strong>ViT-B/32-Frozen (78.07%) lại vượt xa ResNet-18-Frozen (68.43%)</strong> (+9.64%). Điều này cho thấy biểu diễn đặc trưng toàn cục (global representation) trích xuất bởi ViT từ ImageNet có khả năng tổng quát hóa sang miền dữ liệu biển báo tốt hơn các bộ lọc cục bộ tầng cuối của ResNet-18.</li>
+                    <li><strong>3. Tinh chỉnh một phần (Partial) &amp; Toàn bộ (Finetune):</strong> Mở khóa block cuối ở chế độ <strong>Partial</strong> giúp độ chính xác bứt phá mạnh (ResNet-18: <strong>96.21%</strong>, ViT-B/32: <strong>94.93%</strong> dù chỉ train 8.1% tham số). Chế độ <strong>Finetune</strong> đạt đỉnh cao nhất ở cả hai kiến trúc (<strong>ResNet-18: 98.64%</strong>, <strong>ViT-B/32: 97.54%</strong>), đường chéo chính trên Confusion Matrix sắc nét đều qua cả 43 lớp.</li>
+                    <li><strong>4. Chi phí tính toán &amp; Kết luận cho bài toán ADAS:</strong> ViT-B/32 nặng gấp 7.8 lần (87.5M vs 11.2M tham số) và tốn thời gian huấn luyện gấp ~3 lần ResNet-18 (509.7s vs 174.0s ở chế độ Finetune). Do đó, <strong>ResNet-18-Finetune là lựa chọn tối ưu nhất</strong> cho hệ thống nhận diện biển báo giao thông thực tế.</li>
+                </ul>
+            </div>
         </div>
         
         <h2>Mã nguồn và báo cáo</h2>

@@ -1,0 +1,20 @@
+Class,DeepLabV3+-ResNet50,SegFormer-B0 (CE+Dice),SegFormer-B0 (CE-only)
+road,96.61,93.64,93.23
+sidewalk,74.8,57.69,56.11
+building,87.15,79.71,78.58
+wall,46.39,24.21,20.85
+fence,43.15,14.46,9.25
+pole,31.71,22.15,20.09
+traffic light,44.29,14.92,3.99
+traffic sign,53.49,21.8,14.4
+vegetation,86.84,82.72,82.25
+terrain,58.39,46.49,45.64
+sky,90.08,87.44,84.84
+person,62.43,42.12,39.81
+rider,44.07,12.1,1.0
+car,89.37,78.62,77.07
+truck,68.1,14.45,11.3
+bus,70.81,33.57,19.9
+train,47.41,17.12,8.12
+motorcycle,38.28,9.7,3.65
+bicycle,59.25,38.11,31.36

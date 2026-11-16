@@ -32,8 +32,11 @@ So sánh ≥ 2 phương pháp trên cùng tập Cityscapes:
 ```text
 A2/
 ├── A2_1_EDA_Dataloader.ipynb   # Mốc A2.1: EDA + Dataset/DataLoader + Augmentation
-├── data/cityscapes/            # Dữ liệu Cityscapes (tự tải thủ công, xem mục 6)
-├── outputs_a2_1/                # Hình ảnh/kết quả EDA xuất ra từ notebook
+├── A2_2_Segmentation_Training.ipynb # Mốc A2.2: huấn luyện và đánh giá
+├── cityscapes_dataset.py       # Dataset và ánh xạ nhãn Cityscapes
+├── download_cityscapes_kaggle.py # Tải dữ liệu từ Kaggle
+├── outputs_a2_1/                # Kết quả EDA/DataLoader
+├── outputs_a2_2/                # Kết quả huấn luyện/phân đoạn
 └── README.md
 ```
 
@@ -54,13 +57,7 @@ cityscapes-dataset.com:
    `leftImg8bit`/`gtFine` trong cache Kaggle và tạo NTFS junction (Windows) /
    symlink (Linux/Mac) trỏ vào `A2/data/cityscapes/`.
 
-### Cách 2: Trang chủ Cityscapes chính thức
-
-1. Đăng ký và đăng nhập tại [cityscapes-dataset.com](https://www.cityscapes-dataset.com/).
-2. Chạy `python download_cityscapes.py` (script sẽ hỏi username/password ngay trong
-   terminal) để tự tải và giải nén `leftImg8bit_trainvaltest.zip` + `gtFine_trainvaltest.zip`.
-
-Dù dùng cách nào, kết quả cuối cùng phải có `A2/data/cityscapes/leftImg8bit/` và
+Sau khi tải, kết quả cuối cùng phải có `A2/data/cityscapes/leftImg8bit/` và
 `A2/data/cityscapes/gtFine/`.
 
 Nếu chưa có dữ liệu thật, notebook sẽ tự phát hiện và tạo một tập dữ liệu tổng hợp
@@ -87,16 +84,28 @@ Mở [`A2_1_EDA_Dataloader.ipynb`](./A2_1_EDA_Dataloader.ipynb) và chạy tuầ
    (`RandomResizedCrop`, `RandomHorizontalFlip`, `ColorJitter`, chuẩn hóa ImageNet).
 4. Lưu tổng kết mốc A2.1 (`a2_1_summary.json`) vào `outputs_a2_1/`.
 
-## 9. Trạng thái
+## 9. Kết quả A2.2
 
-> **A2.1 (hạn 02/11/2026):** đã khóa chủ đề, paper, mô tả dataset/metric, và hoàn thành
-> EDA + Dataset/DataLoader + augmentation.
-> **A2.2 (hạn 16/11/2026):** sẽ triển khai huấn luyện DeepLabV3+ và SegFormer, so sánh số
-> liệu (mIoU/Dice) và phân tích paper đầy đủ.
+| Mô hình | Loss | mIoU (%) | mDice (%) | Pixel Acc (%) | FPS |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| **DeepLabV3+-ResNet50** | CE + Dice | **62.77** | **75.36** | **92.79** | 85.5 |
+| SegFormer-B0 | CE + Dice | 41.63 | 53.40 | 88.19 | 114.3 |
+| SegFormer-B0 | CE | 36.92 | 46.75 | 87.68 | **161.2** |
 
-## 10. Tài liệu liên quan
+DeepLabV3+-ResNet50 đạt chất lượng phân đoạn tốt nhất, trong khi SegFormer-B0
+với CE thuần có tốc độ suy luận cao nhất. Các file kết quả gồm learning curves,
+per-class IoU, dự đoán định tính và bảng CSV trong [`outputs_a2_2/`](./outputs_a2_2/).
+
+## 10. Trạng thái
+
+> **A2.1 (02/11/2026):** đã hoàn thành EDA, Dataset/DataLoader và augmentation.
+> **A2.2 (16/11/2026):** đã hoàn thành huấn luyện, so sánh DeepLabV3+/SegFormer
+> và tổng hợp kết quả mIoU/Dice.
+
+## 11. Tài liệu liên quan
 
 - [Notebook A2.1](./A2_1_EDA_Dataloader.ipynb)
+- [Notebook A2.2](./A2_2_Segmentation_Training.ipynb)
 - [Trang giới thiệu A2](../docs/a2.html)
 - [README của toàn bộ assignment](../README.md)
 
